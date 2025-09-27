@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  copilot-mcp-server:
+    build: .
+    container_name: copilot-mcp-server
+    environment:
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - COPILOT_CLI_PATH=gh
+      - COPILOT_TIMEOUT=30000
+      - COPILOT_MAX_RETRIES=3
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
