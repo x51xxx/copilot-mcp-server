@@ -1,25 +1,20 @@
 import { spawn } from 'child_process';
-import { 
-  CommandResult, 
-  ExecutionOptions, 
-  CommandExecutionError,
-  Config 
-} from '../types/index.js';
+import { CommandResult, ExecutionOptions, CommandExecutionError, Config } from '../types/index.js';
 
 export class CommandExecutor {
   constructor(private readonly config: Config) {}
 
   async execute(
-    command: string, 
-    args: string[], 
+    command: string,
+    args: string[],
     options: ExecutionOptions = {}
   ): Promise<CommandResult> {
     const startTime = Date.now();
     const maxRetries = options.maxRetries ?? this.config.copilot.maxRetries;
     const retryDelay = options.retryDelay ?? this.config.copilot.retryDelay;
-    
+
     let lastError: Error | undefined;
-    
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const result = await this.executeOnce(command, args, options);
@@ -27,13 +22,13 @@ export class CommandExecutor {
         return result;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (attempt < maxRetries) {
           await this.sleep(retryDelay * Math.pow(2, attempt)); // Exponential backoff
         }
       }
     }
-    
+
     throw new CommandExecutionError(
       `Command failed after ${maxRetries + 1} attempts: ${lastError?.message}`,
       `${command} ${args.join(' ')}`,
@@ -48,7 +43,7 @@ export class CommandExecutor {
   ): Promise<CommandResult> {
     const fullCommand = `${command} ${args.join(' ')}`;
     const timeout = options.timeout ?? this.config.copilot.timeout;
-    
+
     return new Promise((resolve, reject) => {
       const child = spawn(command, args, {
         cwd: options.cwd,
@@ -103,6 +98,6 @@ export class CommandExecutor {
   }
 
   private async sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

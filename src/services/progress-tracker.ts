@@ -24,7 +24,7 @@ export class ProgressTracker {
 
     this.progressMap.set(id, progress);
     this.notifyListeners(progress);
-    
+
     return progress;
   }
 
@@ -35,12 +35,12 @@ export class ProgressTracker {
     const progress = this.progressMap.get(progressId);
     if (!progress) return;
 
-    const step = progress.steps.find(s => s.id === stepId);
+    const step = progress.steps.find((s) => s.id === stepId);
     if (!step) return;
 
     step.status = 'running';
     step.startTime = new Date();
-    
+
     this.notifyListeners(progress);
   }
 
@@ -51,7 +51,7 @@ export class ProgressTracker {
     const progress = this.progressMap.get(progressId);
     if (!progress) return;
 
-    const step = progress.steps.find(s => s.id === stepId);
+    const step = progress.steps.find((s) => s.id === stepId);
     if (!step) return;
 
     step.status = 'completed';
@@ -61,12 +61,12 @@ export class ProgressTracker {
     }
 
     // Check if all steps are completed
-    const allCompleted = progress.steps.every(s => s.status === 'completed');
+    const allCompleted = progress.steps.every((s) => s.status === 'completed');
     if (allCompleted) {
       progress.status = 'completed';
       progress.endTime = new Date();
     }
-    
+
     this.notifyListeners(progress);
   }
 
@@ -77,7 +77,7 @@ export class ProgressTracker {
     const progress = this.progressMap.get(progressId);
     if (!progress) return;
 
-    const step = progress.steps.find(s => s.id === stepId);
+    const step = progress.steps.find((s) => s.id === stepId);
     if (!step) return;
 
     step.status = 'failed';
@@ -87,7 +87,7 @@ export class ProgressTracker {
     // Mark overall progress as failed
     progress.status = 'failed';
     progress.endTime = new Date();
-    
+
     this.notifyListeners(progress);
   }
 
@@ -108,13 +108,12 @@ export class ProgressTracker {
   /**
    * Remove completed or failed progress items older than specified time
    */
-  cleanup(olderThanMs = 24 * 60 * 60 * 1000): void { // 24 hours default
+  cleanup(olderThanMs = 24 * 60 * 60 * 1000): void {
+    // 24 hours default
     const cutoffTime = new Date(Date.now() - olderThanMs);
-    
+
     for (const [id, progress] of this.progressMap.entries()) {
-      if (progress.status !== 'running' && 
-          progress.endTime && 
-          progress.endTime < cutoffTime) {
+      if (progress.status !== 'running' && progress.endTime && progress.endTime < cutoffTime) {
         this.progressMap.delete(id);
       }
     }
@@ -142,10 +141,10 @@ export class ProgressTracker {
    */
   formatProgress(progress: Progress): string {
     const lines: string[] = [];
-    
+
     lines.push(`📊 ${progress.name} [${progress.status.toUpperCase()}]`);
     lines.push(`Started: ${progress.startTime.toLocaleString()}`);
-    
+
     if (progress.endTime) {
       const duration = progress.endTime.getTime() - progress.startTime.getTime();
       lines.push(`Duration: ${Math.round(duration / 1000)}s`);
@@ -153,19 +152,20 @@ export class ProgressTracker {
 
     lines.push('');
     lines.push('Steps:');
-    
+
     for (const step of progress.steps) {
       const statusIcon = this.getStatusIcon(step.status);
-      const duration = step.startTime && step.endTime 
-        ? ` (${Math.round((step.endTime.getTime() - step.startTime.getTime()) / 1000)}s)`
-        : '';
-      
+      const duration =
+        step.startTime && step.endTime
+          ? ` (${Math.round((step.endTime.getTime() - step.startTime.getTime()) / 1000)}s)`
+          : '';
+
       lines.push(`  ${statusIcon} ${step.name}${duration}`);
-      
+
       if (step.error) {
         lines.push(`    Error: ${step.error}`);
       }
-      
+
       if (step.output && step.output.trim()) {
         const output = step.output.trim();
         if (output.length > 100) {
@@ -181,11 +181,16 @@ export class ProgressTracker {
 
   private getStatusIcon(status: ProgressStep['status']): string {
     switch (status) {
-      case 'pending': return '⏳';
-      case 'running': return '🔄';
-      case 'completed': return '✅';
-      case 'failed': return '❌';
-      default: return '❓';
+      case 'pending':
+        return '⏳';
+      case 'running':
+        return '🔄';
+      case 'completed':
+        return '✅';
+      case 'failed':
+        return '❌';
+      default:
+        return '❓';
     }
   }
 

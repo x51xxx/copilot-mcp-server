@@ -162,7 +162,11 @@ export class MCPServerError extends Error {
 }
 
 export class CommandExecutionError extends MCPServerError {
-  constructor(message: string, public readonly command: string, details?: unknown) {
+  constructor(
+    message: string,
+    public readonly command: string,
+    details?: unknown
+  ) {
     super(message, 'COMMAND_EXECUTION_ERROR', details);
     this.name = 'CommandExecutionError';
   }

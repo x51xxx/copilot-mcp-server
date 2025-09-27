@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import { 
-  ToolResult, 
-  ToolContext, 
-  ValidationError 
-} from '../types/index.js';
+import { ToolResult, ToolContext, ValidationError } from '../types/index.js';
 import { OutputParser } from '../utils/index.js';
 import { AskTool } from './ask-tool.js';
 
@@ -41,31 +37,30 @@ export class BatchTool {
   async execute(args: unknown, context: ToolContext): Promise<ToolResult> {
     try {
       const validArgs = BatchToolArgsSchema.parse(args);
-      
+
       // Validate task dependencies
       this.validateTaskDependencies(validArgs.tasks);
-      
+
       // Execute tasks
-      const results = validArgs.parallel 
+      const results = validArgs.parallel
         ? await this.executeParallel(validArgs.tasks, context, validArgs.continueOnError)
         : await this.executeSequential(validArgs.tasks, context, validArgs.continueOnError);
-      
+
       return {
-        success: results.every(r => r.result.success) || validArgs.continueOnError,
+        success: results.every((r) => r.result.success) || validArgs.continueOnError,
         content: this.formatBatchResults(results),
         data: {
           results,
           totalTasks: validArgs.tasks.length,
-          successfulTasks: results.filter(r => r.result.success).length,
-          failedTasks: results.filter(r => !r.result.success).length,
+          successfulTasks: results.filter((r) => r.result.success).length,
+          failedTasks: results.filter((r) => !r.result.success).length,
         },
       };
-      
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new ValidationError('Invalid arguments for batch tool', error.errors);
       }
-      
+
       return {
         success: false,
         content: 'Failed to execute batch operation',
@@ -75,20 +70,18 @@ export class BatchTool {
   }
 
   private validateTaskDependencies(tasks: BatchTaskInput[]): void {
-    const taskIds = new Set(tasks.map(t => t.id));
-    
+    const taskIds = new Set(tasks.map((t) => t.id));
+
     for (const task of tasks) {
       if (task.dependencies) {
         for (const depId of task.dependencies) {
           if (!taskIds.has(depId)) {
-            throw new ValidationError(
-              `Task ${task.id} depends on non-existent task ${depId}`
-            );
+            throw new ValidationError(`Task ${task.id} depends on non-existent task ${depId}`);
           }
         }
       }
     }
-    
+
     // Check for circular dependencies (simple cycle detection)
     this.checkCircularDependencies(tasks);
   }
@@ -96,21 +89,21 @@ export class BatchTool {
   private checkCircularDependencies(tasks: BatchTaskInput[]): void {
     const visited = new Set<string>();
     const recursionStack = new Set<string>();
-    
-    const taskMap = new Map(tasks.map(t => [t.id, t]));
-    
+
+    const taskMap = new Map(tasks.map((t) => [t.id, t]));
+
     const hasCycle = (taskId: string): boolean => {
       if (recursionStack.has(taskId)) {
         return true;
       }
-      
+
       if (visited.has(taskId)) {
         return false;
       }
-      
+
       visited.add(taskId);
       recursionStack.add(taskId);
-      
+
       const task = taskMap.get(taskId);
       if (task?.dependencies) {
         for (const depId of task.dependencies) {
@@ -119,11 +112,11 @@ export class BatchTool {
           }
         }
       }
-      
+
       recursionStack.delete(taskId);
       return false;
     };
-    
+
     for (const task of tasks) {
       if (hasCycle(task.id)) {
         throw new ValidationError('Circular dependency detected in batch tasks');
@@ -138,14 +131,14 @@ export class BatchTool {
   ): Promise<BatchResult[]> {
     const results: BatchResult[] = [];
     const completedTasks = new Set<string>();
-    
+
     // Sort tasks by dependencies
     const sortedTasks = this.topologicalSort(tasks);
-    
+
     for (const task of sortedTasks) {
       // Check if dependencies are met
       if (task.dependencies) {
-        const unmetDeps = task.dependencies.filter(dep => !completedTasks.has(dep));
+        const unmetDeps = task.dependencies.filter((dep) => !completedTasks.has(dep));
         if (unmetDeps.length > 0) {
           const errorMsg = `Task ${task.id} has unmet dependencies: ${unmetDeps.join(', ')}`;
           results.push({
@@ -157,35 +150,38 @@ export class BatchTool {
             },
             duration: 0,
           });
-          
+
           if (!continueOnError) {
             break;
           }
           continue;
         }
       }
-      
+
       const startTime = Date.now();
-      const result = await this.askTool.execute({
-        query: task.query,
-        context: task.context,
-      }, context);
-      
+      const result = await this.askTool.execute(
+        {
+          query: task.query,
+          context: task.context,
+        },
+        context
+      );
+
       const batchResult: BatchResult = {
         taskId: task.id,
         result,
         duration: Date.now() - startTime,
       };
-      
+
       results.push(batchResult);
-      
+
       if (result.success) {
         completedTasks.add(task.id);
       } else if (!continueOnError) {
         break;
       }
     }
-    
+
     return results;
   }
 
@@ -196,21 +192,24 @@ export class BatchTool {
   ): Promise<BatchResult[]> {
     // For parallel execution, we'll ignore dependencies for now
     // In a more sophisticated implementation, we'd execute in waves based on dependencies
-    
+
     const promises = tasks.map(async (task): Promise<BatchResult> => {
       const startTime = Date.now();
-      const result = await this.askTool.execute({
-        query: task.query,
-        context: task.context,
-      }, context);
-      
+      const result = await this.askTool.execute(
+        {
+          query: task.query,
+          context: task.context,
+        },
+        context
+      );
+
       return {
         taskId: task.id,
         result,
         duration: Date.now() - startTime,
       };
     });
-    
+
     if (continueOnError) {
       const settledResults = await Promise.allSettled(promises);
       return settledResults.map((settled, index) => {
@@ -222,7 +221,8 @@ export class BatchTool {
             result: {
               success: false,
               content: 'Task failed during parallel execution',
-              error: settled.reason instanceof Error ? settled.reason.message : String(settled.reason),
+              error:
+                settled.reason instanceof Error ? settled.reason.message : String(settled.reason),
             },
             duration: 0,
           };
@@ -234,50 +234,50 @@ export class BatchTool {
   }
 
   private topologicalSort(tasks: BatchTaskInput[]): BatchTaskInput[] {
-    const taskMap = new Map(tasks.map(t => [t.id, t]));
+    const taskMap = new Map(tasks.map((t) => [t.id, t]));
     const visited = new Set<string>();
     const result: BatchTaskInput[] = [];
-    
+
     const visit = (taskId: string): void => {
       if (visited.has(taskId)) return;
-      
+
       const task = taskMap.get(taskId);
       if (!task) return;
-      
+
       visited.add(taskId);
-      
+
       // Visit dependencies first
       if (task.dependencies) {
         for (const depId of task.dependencies) {
           visit(depId);
         }
       }
-      
+
       result.push(task);
     };
-    
+
     for (const task of tasks) {
       visit(task.id);
     }
-    
+
     return result;
   }
 
   private formatBatchResults(results: BatchResult[]): string {
     const lines: string[] = [];
-    
-    const successful = results.filter(r => r.result.success).length;
+
+    const successful = results.filter((r) => r.result.success).length;
     const total = results.length;
-    
+
     lines.push(`📊 Batch Execution Results: ${successful}/${total} tasks successful`);
     lines.push('');
-    
+
     for (const result of results) {
       const icon = result.result.success ? '✅' : '❌';
       const duration = `${result.duration}ms`;
-      
+
       lines.push(`${icon} Task ${result.taskId} (${duration})`);
-      
+
       if (result.result.success) {
         // Show abbreviated content for successful tasks
         const content = result.result.content;
@@ -290,10 +290,10 @@ export class BatchTool {
         // Show error for failed tasks
         lines.push(`   Error: ${result.result.error}`);
       }
-      
+
       lines.push('');
     }
-    
+
     return lines.join('\n');
   }
 

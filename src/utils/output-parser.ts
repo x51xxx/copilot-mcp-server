@@ -6,13 +6,13 @@ export class OutputParser {
    */
   parseCopilotOutput(result: CommandResult): CopilotResponse {
     const output = result.stdout || result.stderr;
-    
+
     // Try to extract suggestions from copilot output
     const suggestions = this.extractSuggestions(output);
-    
+
     // Extract metadata if available
     const metadata = this.extractMetadata(output);
-    
+
     return {
       output: output.trim(),
       suggestions,
@@ -25,15 +25,13 @@ export class OutputParser {
    */
   private extractSuggestions(output: string): string[] {
     const suggestions: string[] = [];
-    
+
     // Look for code blocks or numbered suggestions
     const codeBlockRegex = /```[\s\S]*?```/g;
     const codeBlocks = output.match(codeBlockRegex);
-    
+
     if (codeBlocks) {
-      suggestions.push(...codeBlocks.map(block => 
-        block.replace(/```\w*\n?|\n?```/g, '').trim()
-      ));
+      suggestions.push(...codeBlocks.map((block) => block.replace(/```\w*\n?|\n?```/g, '').trim()));
     }
 
     // Look for numbered suggestions
@@ -49,7 +47,7 @@ export class OutputParser {
       suggestions.push(match[1]?.trim() ?? '');
     }
 
-    return [...new Set(suggestions)].filter(s => s.length > 0);
+    return [...new Set(suggestions)].filter((s) => s.length > 0);
   }
 
   /**
@@ -57,7 +55,7 @@ export class OutputParser {
    */
   private extractMetadata(output: string): Record<string, unknown> {
     const metadata: Record<string, unknown> = {};
-    
+
     // Extract file paths
     const filePathRegex = /(?:file|path):\s*([^\s\n]+)/gi;
     let match;
@@ -98,7 +96,7 @@ export class OutputParser {
    */
   parseError(result: CommandResult): string {
     let errorMessage = '';
-    
+
     if (result.stderr) {
       errorMessage = result.stderr;
     } else if (!result.success && result.stdout) {
@@ -122,7 +120,7 @@ export class OutputParser {
    */
   formatResult(result: CommandResult, includeMetadata = true): string {
     const parts: string[] = [];
-    
+
     if (result.success) {
       parts.push('✅ Command executed successfully');
     } else {

@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { 
-  ToolResult, 
-  ToolContext, 
-  CopilotCommand, 
-  CopilotResponse, 
-  ValidationError 
+import {
+  ToolResult,
+  ToolContext,
+  CopilotCommand,
+  CopilotResponse,
+  ValidationError,
 } from '../types/index.js';
 import { CommandExecutor } from '../utils/index.js';
 import { OutputParser } from '../utils/index.js';
@@ -28,23 +28,19 @@ export class AskTool {
     try {
       // Validate arguments
       const validArgs = AskToolArgsSchema.parse(args);
-      
+
       // Build copilot command
       const command = this.buildCopilotCommand(validArgs);
-      
+
       // Execute command
-      const result = await this.commandExecutor.execute(
-        command.command, 
-        command.args,
-        {
-          cwd: process.cwd(),
-          timeout: context.config.copilot.timeout,
-        }
-      );
+      const result = await this.commandExecutor.execute(command.command, command.args, {
+        cwd: process.cwd(),
+        timeout: context.config.copilot.timeout,
+      });
 
       // Parse output
       const response = this.outputParser.parseCopilotOutput(result);
-      
+
       return {
         success: result.success,
         content: this.formatResponse(response, validArgs),
@@ -54,12 +50,11 @@ export class AskTool {
           duration: result.duration,
         },
       };
-      
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new ValidationError('Invalid arguments for ask tool', error.errors);
       }
-      
+
       return {
         success: false,
         content: 'Failed to execute ask command',
@@ -71,20 +66,20 @@ export class AskTool {
   private buildCopilotCommand(args: AskToolArgs): CopilotCommand {
     const command = 'gh';
     const commandArgs = ['copilot', 'suggest'];
-    
+
     // Add the main query
     commandArgs.push(args.query);
-    
+
     // Add context if provided
     if (args.context) {
       commandArgs.push('--context', args.context);
     }
-    
+
     // Add language if provided
     if (args.language) {
       commandArgs.push('--language', args.language);
     }
-    
+
     // Add files if provided
     if (args.files && args.files.length > 0) {
       for (const file of args.files) {
@@ -101,10 +96,10 @@ export class AskTool {
 
   private formatResponse(response: CopilotResponse, args: AskToolArgs): string {
     const lines: string[] = [];
-    
+
     lines.push(`🤖 GitHub Copilot Response for: "${args.query}"`);
     lines.push('');
-    
+
     if (response.suggestions && response.suggestions.length > 0) {
       lines.push('📝 Suggestions:');
       response.suggestions.forEach((suggestion, index) => {
@@ -112,20 +107,20 @@ export class AskTool {
       });
       lines.push('');
     }
-    
+
     if (response.output) {
       lines.push('💬 Full Response:');
       lines.push(response.output);
       lines.push('');
     }
-    
+
     if (response.metadata && Object.keys(response.metadata).length > 0) {
       lines.push('ℹ️ Metadata:');
       for (const [key, value] of Object.entries(response.metadata)) {
         lines.push(`  ${key}: ${JSON.stringify(value)}`);
       }
     }
-    
+
     return lines.join('\n');
   }
 
