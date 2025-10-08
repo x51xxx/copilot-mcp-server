@@ -199,5 +199,4 @@ Focus on:
 
 - [Getting Started](../../getting-started.md)
 - [GitHub Copilot CLI Basics](../../copilot-cli/overview.md)
-- [Configuration](../../config.md)
 - [FAQ](../../resources/faq.md)

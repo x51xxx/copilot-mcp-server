@@ -288,5 +288,4 @@ copilot -p "@src/payment/*.ts @logs/error.log investigate the payment processing
 ## See Also
 
 - [How It Works](./how-it-works.md) - Understanding the MCP architecture
-- [Model Selection](./models.md) - Choosing the right model for your task
-- [Sandbox Modes](./sandbox.md) - Security and approval configurations
+- [GitHub Copilot CLI Overview](../copilot-cli/overview.md) - GitHub Copilot CLI integration

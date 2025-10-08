@@ -355,6 +355,6 @@ Check our [GitHub Projects](https://github.com/x51xxx/copilot-mcp-tool/projects)
 
 - [Installation Guide](../getting-started.md)
 - [Troubleshooting Guide](./troubleshooting.md)
-- [API Reference](../api/tools/ask-copilot.md)
+- [API Reference](../api/tools/ask.md)
 - [Examples](../examples/basic-usage.md)
 - [Contributing](https://github.com/x51xxx/copilot-mcp-tool/blob/main/CONTRIBUTING.md)

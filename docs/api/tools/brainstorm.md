@@ -482,7 +482,7 @@ Try: "Opportunities to enhance database performance"
 ## Related Tools
 
 - [ask](./ask.md) - Execute analysis before brainstorming
-- [fetch-chunk](./fetch-chunk.md) - Handle large brainstorming results
+- [batch](./batch.md) - Process multiple brainstorming tasks
 - [ping](./ping.md) - Test connectivity
 - [help](./help.md) - Show available options
 

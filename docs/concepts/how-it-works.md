@@ -374,6 +374,4 @@ await client.callTool('ask', {
 ## See Also
 
 - [File Analysis](./file-analysis.md) - Using the @ syntax effectively
-- [Model Selection](./models.md) - Choosing the right AI model
-- [Sandbox Modes](./sandbox.md) - Security and approval configurations
-- [GitHub Copilot CLI Documentation](../codex-cli-getting-started.md) - Underlying CLI reference
+- [GitHub Copilot CLI Overview](../copilot-cli/overview.md) - GitHub Copilot CLI integration

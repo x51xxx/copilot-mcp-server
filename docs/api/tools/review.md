@@ -358,12 +358,9 @@ Use glob patterns to exclude files from review:
 # .github/workflows/code-review.yml
 - name: Security Review
   run: |
-    npx @trishchuk/copilot-mcp-server review-copilot \
-      --target "@src/" \
-      --reviewType "security" \
-      --severity "medium" \
-      --outputFormat "json" \
-      --generateReport true > security-report.json
+    # Use the MCP tool via your preferred method
+    # Example: via Claude Code or direct MCP client
+    echo "Run security review using MCP client"
 ```
 
 ### Pre-commit hook
@@ -476,6 +473,6 @@ Common errors and solutions:
 
 ## Related tools
 
-- [`ask-copilot`](./ask-copilot) - General purpose Copilot CLI integration
-- [`batch-copilot`](./batch-copilot) - Batch processing with Copilot CLI
-- [`review`](./review) - Legacy GitHub Copilot CLI code review
+- [`ask`](./ask) - General purpose Copilot CLI integration
+- [`batch`](./batch) - Batch processing with Copilot CLI
+- [`brainstorm`](./brainstorm) - Creative idea generation

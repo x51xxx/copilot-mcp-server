@@ -300,7 +300,7 @@ const healthCheck = async () => {
 
 - [ping](./ping.md) - Quick connectivity test
 - [ask](./ask.md) - Actual long operations
-- [fetch-chunk](./fetch-chunk.md) - Handle large responses
+- [help](./help.md) - Show available options
 
 ## See Also
 

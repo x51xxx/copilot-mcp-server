@@ -381,6 +381,6 @@ Within the same priority level, tasks are executed in the order they appear in t
 
 ## Related tools
 
-- [`ask-copilot`](./ask-copilot) - Single task execution with Copilot CLI
-- [`review-copilot`](./review-copilot) - Comprehensive code review
-- [`batch`](./batch) - Legacy GitHub Copilot CLI batch processing
+- [`ask`](./ask) - Single task execution with Copilot CLI
+- [`review`](./review) - Comprehensive code review
+- [`brainstorm`](./brainstorm) - Creative idea generation

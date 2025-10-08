@@ -436,6 +436,5 @@ No, GitHub Copilot CLI requires internet connection to OpenAI API.
 ## Related Resources
 
 - [Installation Guide](../getting-started.md)
-- [API Reference](../api/tools/ask-copilot.md)
-- [Configuration Guide](../config.md)
+- [API Reference](../api/tools/ask.md)
 - [Examples](../examples/basic-usage.md)
