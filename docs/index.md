@@ -64,8 +64,12 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 ```json
 {
   "mcpServers": {
-    "copilot": {
-      "command": "copilot-mcp-server"
+    "copilot-cli": {
+      "command": "npx",
+      "args": ["-y", "@trishchuk/copilot-mcp-server"],
+      "env": {
+        "COPILOT_MODEL": "claude-sonnet-4.5"
+      }
     }
   }
 }
@@ -82,42 +86,40 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 
 ### Ask a Question
 
-```typescript
-{
-  "prompt": "Explain what @src/components/UserProfile.tsx does",
-  "addDir": ["./src"],
-  "allowAllTools": true
-}
+Ask Claude to use the Copilot MCP tools:
+
+```
+Use the ask tool to explain what @src/components/UserProfile.tsx does
+```
+
+Or use natural language:
+
+```
+Analyze @package.json and explain the project dependencies using Copilot
 ```
 
 ### Batch Processing
 
-```typescript
-{
-  "tasks": [
-    {
-      "task": "Add TypeScript types to user model",
-      "target": "@src/models/user.js",
-      "priority": "high"
-    },
-    {
-      "task": "Update console.log to proper logging",
-      "target": "@src/",
-      "priority": "normal"
-    }
-  ]
-}
+Process multiple tasks at once:
+
+```
+Use the batch tool to:
+1. Add TypeScript types to @src/models/user.js
+2. Update console.log to proper logging in @src/
 ```
 
 ### Code Review
 
-```typescript
-{
-  "target": "@src/auth/",
-  "reviewType": "security",
-  "severity": "medium",
-  "includeFixSuggestions": true
-}
+Request a comprehensive code review:
+
+```
+Use the review tool to perform a security review of @src/auth/ and include fix suggestions
+```
+
+Or specify details:
+
+```
+Review @src/auth/ for security vulnerabilities with medium severity filter
 ```
 
 ## Features
@@ -153,11 +155,21 @@ Real-time progress updates keep you informed during long-running operations:
 
 ### ⚡ Multiple AI Models
 
-Choose from multiple AI models:
+Choose from available AI models:
 
+- `claude-sonnet-4.5` - Default, best for code generation
+- `claude-sonnet-4` - Faster version
 - `gpt-5` - OpenAI GPT-5
-- `claude-sonnet-4` - Anthropic Claude Sonnet 4
-- `claude-sonnet-4.5` - Anthropic Claude Sonnet 4.5
+
+**Set default model**:
+```bash
+export COPILOT_MODEL=claude-sonnet-4.5
+```
+
+**Override per request**:
+```
+Use the ask tool with model gpt-5 to analyze @src/
+```
 
 ## Requirements
 

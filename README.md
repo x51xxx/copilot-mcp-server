@@ -74,7 +74,10 @@ Add this configuration to your Claude Desktop config file:
   "mcpServers": {
     "copilot-cli": {
       "command": "npx",
-      "args": ["-y", "@trishchuk/copilot-mcp-server"]
+      "args": ["-y", "@trishchuk/copilot-mcp-server"],
+      "env": {
+        "COPILOT_MODEL": "claude-sonnet-4.5"
+      }
     }
   }
 }
@@ -88,7 +91,10 @@ If you installed globally, use this configuration instead:
 {
   "mcpServers": {
     "copilot-cli": {
-      "command": "copilot-mcp"
+      "command": "copilot-mcp",
+      "env": {
+        "COPILOT_MODEL": "claude-sonnet-4.5"
+      }
     }
   }
 }
@@ -102,6 +108,58 @@ If you installed globally, use this configuration instead:
   - **Linux**: `~/.config/claude/claude_desktop_config.json`
 
 After updating the configuration, restart your terminal session.
+
+### Environment Variables
+
+Configure default behavior with environment variables:
+
+#### `COPILOT_MODEL` - Default AI Model
+
+**Method 1: In MCP Configuration (Recommended)**
+
+Add the `env` field to your MCP server configuration:
+
+```json
+{
+  "mcpServers": {
+    "copilot-cli": {
+      "command": "npx",
+      "args": ["-y", "@trishchuk/copilot-mcp-server"],
+      "env": {
+        "COPILOT_MODEL": "claude-sonnet-4.5"
+      }
+    }
+  }
+}
+```
+
+**Method 2: System Environment Variable**
+
+```bash
+# Set for current session
+export COPILOT_MODEL=claude-sonnet-4.5
+
+# Permanently (add to ~/.bashrc or ~/.zshrc)
+echo 'export COPILOT_MODEL=claude-sonnet-4.5' >> ~/.zshrc
+```
+
+**Available models**:
+- `claude-sonnet-4.5` - Default, best for code generation
+- `claude-sonnet-4` - Faster version
+- `gpt-5` - OpenAI GPT-5
+
+**Priority**: `model` parameter > `COPILOT_MODEL` env > Copilot CLI default (`claude-sonnet-4.5`)
+
+**Override in requests**:
+```
+# Uses COPILOT_MODEL
+Use ask tool to analyze @src/
+
+# Overrides with gpt-5
+Use ask tool with model gpt-5 to analyze @src/
+```
+
+See [Getting Started Guide](https://x51xxx.github.io/copilot-mcp-tool/getting-started#environment-variables) for full configuration details.
 
 ## Example Workflow
 

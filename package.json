@@ -1,6 +1,6 @@
 {
   "name": "@trishchuk/copilot-mcp-server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MCP server for GitHub Copilot CLI integration",
   "type": "module",
   "main": "dist/index.js",

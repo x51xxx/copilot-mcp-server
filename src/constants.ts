@@ -83,12 +83,12 @@ export const CLI = {
     SCREEN_READER: '--screen-reader',
     BANNER: '--banner',
   },
-  // Available models (v0.0.329+)
+  // Available models in GitHub Copilot CLI
   MODELS: {
-    GPT_5: 'gpt-5',
+    CLAUDE_SONNET_4_5: 'claude-sonnet-4.5', // Default in Copilot CLI
     CLAUDE_SONNET_4: 'claude-sonnet-4',
-    CLAUDE_SONNET_4_5: 'claude-sonnet-4.5',
-  },
+    GPT_5: 'gpt-5',
+  } as const,
   // Default values
   DEFAULTS: {
     MODEL: process.env.COPILOT_MODEL || undefined, // Use env var or let Copilot CLI choose default

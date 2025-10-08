@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "copilot-cli": {
+      "command": "npx",
+      "args": ["-y", "@trishchuk/copilot-mcp-server"],
+      "env": {
+        "COPILOT_MODEL": "claude-sonnet-4.5"
+      }
+    }
+  }
+}
