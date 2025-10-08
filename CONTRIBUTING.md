@@ -1,6 +1,6 @@
-# Contributing to Codex MCP Tool
+# Contributing to Copilot MCP Tool
 
-Thank you for your interest in contributing to Codex MCP Tool! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to Copilot MCP Tool! This document provides guidelines and instructions for contributing to the project.
 
 ## Code of Conduct
 
@@ -10,18 +10,18 @@ Please be respectful and constructive in all interactions. We aim to maintain a 
 
 ### Reporting Bugs
 
-1. Check [existing issues](https://github.com/x51xxx/codex-mcp-tool/issues) to avoid duplicates
+1. Check [existing issues](https://github.com/x51xxx/copilot-mcp-tool/issues) to avoid duplicates
 2. Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md)
 3. Include:
    - Clear description of the issue
    - Steps to reproduce
    - Expected vs actual behavior
-   - Environment details (Node.js version, OS, Codex CLI version)
+   - Environment details (Node.js version, OS, GitHub Copilot CLI version)
    - Error messages and logs
 
 ### Suggesting Features
 
-1. Check [existing feature requests](https://github.com/x51xxx/codex-mcp-tool/issues?q=is%3Aissue+label%3Aenhancement)
+1. Check [existing feature requests](https://github.com/x51xxx/copilot-mcp-tool/issues?q=is%3Aissue+label%3Aenhancement)
 2. Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md)
 3. Explain the problem your feature solves
 4. Provide use cases and examples
@@ -40,15 +40,15 @@ Please be respectful and constructive in all interactions. We aim to maintain a 
 
 - Node.js >= 18.0.0
 - npm >= 8.0.0
-- Codex CLI installed and authenticated
+- GitHub Copilot CLI installed and authenticated
 - TypeScript knowledge
 
 ### Local Development
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/codex-mcp-tool.git
-cd codex-mcp-tool
+git clone https://github.com/YOUR_USERNAME/copilot-mcp-tool.git
+cd copilot-mcp-tool
 
 # Install dependencies
 npm install
@@ -66,23 +66,26 @@ npm run dev
 ### Testing with MCP Clients
 
 #### Claude Code
+
 ```bash
 # Build and link local development version
 npm run build
 npm link
 
 # Add to Claude Code
-claude mcp add codex-dev --npm-package @trishchuk/codex-mcp-tool
+claude mcp add copilot-dev --npm-package @trishchuk/copilot-mcp-server
 ```
 
 #### Claude Desktop
+
 Add to your configuration:
+
 ```json
 {
   "mcpServers": {
-    "codex-dev": {
+    "copilot-dev": {
       "command": "node",
-      "args": ["/path/to/your/codex-mcp-tool/dist/index.js"]
+      "args": ["/path/to/your/copilot-mcp-server/dist/index.js"]
     }
   }
 }
@@ -118,11 +121,9 @@ src/
 │   ├── registry.ts          # Tool registry types
 │   └── index.ts             # Tool registration
 ├── utils/                    # Utility functions
-│   ├── codexExecutor.ts     # Codex CLI executor
-│   ├── changeModeRunner.ts  # Change mode processor
-│   ├── changeModeParser.ts  # Parse OLD/NEW blocks
-│   ├── changeModeChunker.ts # Split large responses
-│   ├── chunkCache.ts        # Cache management
+│   ├── copilotExecutor.ts   # GitHub Copilot CLI executor
+│   ├── commandExecutor.ts   # Command execution utilities
+│   ├── outputParser.ts      # Output formatting
 │   └── logger.ts            # Logging utilities
 ├── constants.ts              # Project constants
 └── index.ts                 # Main MCP server
@@ -131,12 +132,13 @@ src/
 ### Adding a New Tool
 
 1. Create `src/tools/your-tool.tool.ts`:
+
 ```typescript
 import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
 
 const yourToolArgsSchema = z.object({
-  param: z.string().describe('Parameter description')
+  param: z.string().describe('Parameter description'),
 });
 
 export const yourTool: UnifiedTool = {
@@ -149,20 +151,21 @@ export const yourTool: UnifiedTool = {
       {
         name: 'param',
         description: 'Parameter description',
-        required: true
-      }
-    ]
+        required: true,
+      },
+    ],
   },
   category: 'utility', // or 'simple'
   execute: async (args, onProgress) => {
     // Implementation
     onProgress?.('Processing...');
     return 'Tool result';
-  }
+  },
 };
 ```
 
 2. Register in `src/tools/index.ts`:
+
 ```typescript
 import { yourTool } from './your-tool.tool.js';
 
@@ -174,6 +177,7 @@ toolRegistry.push(yourTool);
 ### Commit Messages
 
 Follow conventional commits:
+
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation changes
@@ -183,6 +187,7 @@ Follow conventional commits:
 - `chore:` Maintenance tasks
 
 Examples:
+
 ```
 feat: add support for GPT-5 model
 fix: handle timeout errors in ask-codex tool
@@ -207,6 +212,7 @@ npm test
 ### Manual Testing Checklist
 
 Before submitting a PR, test:
+
 - [ ] All tools work correctly with their documented parameters
 - [ ] ask-codex tool handles file references (@filename syntax)
 - [ ] changeMode returns structured OLD/NEW blocks
@@ -267,8 +273,10 @@ docs/
 - Include practical examples for all features
 - Link between related documentation pages
 - Use consistent parameter formatting:
+
   ```markdown
   ### paramName (required/optional)
+
   - **Type:** `string`
   - **Description:** What this parameter does
   - **Example:** `"example-value"`
@@ -285,15 +293,16 @@ Releases are automated via GitHub Actions:
 5. Push: `git push origin main --tags`
 
 The CI/CD pipeline will:
+
 - Run tests and linting
 - Build the project
-- Publish to npm as `@trishchuk/codex-mcp-tool`
+- Publish to npm as `@trishchuk/copilot-mcp-server`
 - Create GitHub release
 
 ## Getting Help
 
-- Check [documentation](https://x51xxx.github.io/codex-mcp-tool/)
-- Ask in [GitHub Discussions](https://github.com/x51xxx/codex-mcp-tool/discussions)
+- Check [documentation](https://x51xxx.github.io/copilot-mcp-tool/)
+- Ask in [GitHub Discussions](https://github.com/x51xxx/copilot-mcp-tool/discussions)
 - Join our community chat (if available)
 
 ## License

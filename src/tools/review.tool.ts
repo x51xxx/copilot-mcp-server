@@ -5,42 +5,77 @@ import { formatCopilotResponseForMCP } from '../utils/outputParser.js';
 import { ERROR_MESSAGES, STATUS_MESSAGES } from '../constants.js';
 
 const reviewArgsSchema = z.object({
-  target: z.string().min(1).describe("Target files/directories to review"),
-  reviewType: z.enum([
-    'code-quality',
-    'security',
-    'performance',
-    'best-practices',
-    'architecture',
-    'testing',
-    'documentation',
-    'accessibility',
-    'comprehensive'
-  ]).default('comprehensive').describe("Type of review to perform"),
-  severity: z.enum(['low', 'medium', 'high', 'critical']).optional().describe("Minimum severity level to report"),
-  outputFormat: z.enum(['markdown', 'json', 'text']).default('markdown').describe("Output format for the review"),
-  includeFixSuggestions: z.boolean().default(true).describe("Include specific fix suggestions"),
-  includePriorityRanking: z.boolean().default(true).describe("Include priority ranking for issues"),
-  excludePatterns: z.array(z.string()).default([]).describe("File patterns to exclude"),
-  maxIssues: z.number().min(1).max(100).default(20).describe("Maximum number of issues to report"),
-  addDir: z.union([z.string(), z.array(z.string())]).optional().describe("Directories to grant access"),
-  timeout: z.number().optional().describe("Maximum execution time in milliseconds"),
-  allowAllTools: z.boolean().default(true).describe("Allow all tools for comprehensive analysis"),
+  target: z.string().min(1).describe('Target files/directories to review'),
+  reviewType: z
+    .enum([
+      'code-quality',
+      'security',
+      'performance',
+      'best-practices',
+      'architecture',
+      'testing',
+      'documentation',
+      'accessibility',
+      'comprehensive',
+    ])
+    .default('comprehensive')
+    .describe('Type of review to perform'),
+  model: z
+    .string()
+    .optional()
+    .describe(
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var"
+    ),
+  severity: z
+    .enum(['low', 'medium', 'high', 'critical'])
+    .optional()
+    .describe('Minimum severity level to report'),
+  outputFormat: z
+    .enum(['markdown', 'json', 'text'])
+    .default('markdown')
+    .describe('Output format for the review'),
+  includeFixSuggestions: z.boolean().default(true).describe('Include specific fix suggestions'),
+  includePriorityRanking: z.boolean().default(true).describe('Include priority ranking for issues'),
+  excludePatterns: z.array(z.string()).default([]).describe('File patterns to exclude'),
+  maxIssues: z.number().min(1).max(100).default(20).describe('Maximum number of issues to report'),
+  addDir: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Directories to grant access'),
+  timeout: z.number().optional().describe('Maximum execution time in milliseconds'),
+  allowAllTools: z.boolean().default(true).describe('Allow all tools for comprehensive analysis'),
+  resume: z
+    .union([z.string(), z.boolean()])
+    .optional()
+    .describe('Resume from a previous session (optionally specify session ID)'),
+  continue: z.boolean().optional().describe('Resume the most recent session'),
 });
 
 export const reviewTool: UnifiedTool = {
   name: 'review',
-  description: "Comprehensive code review using GitHub Copilot CLI with multiple review types (security, performance, quality, etc.) and detailed reporting",
+  description:
+    'Comprehensive code review using GitHub Copilot CLI with multiple review types (security, performance, quality, etc.) and detailed reporting',
   zodSchema: reviewArgsSchema,
   prompt: {
-    description: "Perform comprehensive code review with GitHub Copilot CLI"
+    description: 'Perform comprehensive code review with GitHub Copilot CLI',
   },
   category: 'copilot',
   execute: async (args, onProgress) => {
     const {
-      target, reviewType, severity, outputFormat, includeFixSuggestions,
-      includePriorityRanking, excludePatterns, maxIssues,
-      addDir, timeout, allowAllTools
+      target,
+      reviewType,
+      model,
+      severity,
+      outputFormat,
+      includeFixSuggestions,
+      includePriorityRanking,
+      excludePatterns,
+      maxIssues,
+      addDir,
+      timeout,
+      allowAllTools,
+      resume,
+      continue: continueSession,
     } = args;
 
     if (!target || typeof target !== 'string' || !target.trim()) {
@@ -89,7 +124,7 @@ export const reviewTool: UnifiedTool = {
       if (severity) {
         reviewPrompt += ` Only report issues of ${severity} severity or higher.`;
       }
-      
+
       const patterns = excludePatterns as string[];
       if (patterns && patterns.length > 0) {
         reviewPrompt += ` Exclude files matching these patterns: ${patterns.join(', ')}.`;
@@ -126,11 +161,14 @@ export const reviewTool: UnifiedTool = {
       const result = await executeCopilot(
         reviewPrompt,
         {
+          model: model as string,
           addDir: addDir as string | string[],
           allowAllTools: allowAllTools as boolean,
-          timeoutMs: timeout as number || 300000, // 5 minutes default for reviews
+          resume: resume as string | boolean,
+          continue: continueSession as boolean,
+          timeoutMs: (timeout as number) || 300000, // 5 minutes default for reviews
         },
-        (progress) => onProgress?.(`🔍 ${progress.slice(0, 100)}...`)
+        progress => onProgress?.(`🔍 ${progress.slice(0, 100)}...`)
       );
 
       onProgress?.(STATUS_MESSAGES.PROCESSING_COMPLETE);
@@ -155,7 +193,6 @@ ${formattedResult}
 ---
 
 **GitHub Copilot CLI Review completed** ✨`;
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
 
@@ -196,5 +233,5 @@ npm install -g @github/copilot-cli
 3. Check directory permissions: Ensure read access to target files
 4. Try a smaller scope: Review individual files first`;
     }
-  }
+  },
 };

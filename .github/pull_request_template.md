@@ -27,7 +27,7 @@ Fixes #(issue number)
 
 ### Test Configuration
 - **Node.js version**: 
-- **Codex CLI version**: 
+- **GitHub Copilot CLI version**: 
 - **Operating System**: 
 
 ### Test Steps

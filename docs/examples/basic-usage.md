@@ -1,6 +1,6 @@
 # Basic Usage Examples
 
-This guide provides practical examples of using Codex MCP Tool for common development tasks.
+This guide provides practical examples of using Copilot MCP Tool for common development tasks.
 
 ## Getting Started
 
@@ -13,7 +13,7 @@ First, verify the tool is working:
 {
   "name": "ping",
   "arguments": {
-    "prompt": "Hello from Codex!"
+    "prompt": "Hello from Copilot!"
   }
 }
 
@@ -30,7 +30,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "explain what this code does @src/main.ts"
   }
@@ -41,7 +41,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "compare the implementations in @src/old-api.ts and @src/new-api.ts"
   }
@@ -52,7 +52,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "describe the architecture of @src/ and how components interact"
   }
@@ -65,7 +65,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "create comprehensive unit tests for @src/utils/calculator.ts",
     "model": "gpt-5",
@@ -78,7 +78,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "generate JSDoc comments for all functions in @src/api/",
     "changeMode": true
@@ -90,7 +90,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "add error handling and retry logic to @src/services/api-client.ts",
     "model": "gpt-5",
@@ -106,7 +106,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "audit @src/ for OWASP top 10 vulnerabilities and security best practices",
     "model": "gpt-5",
@@ -119,7 +119,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "identify performance bottlenecks in @src/api/ and suggest optimizations",
     "sandboxMode": "read-only"
@@ -131,10 +131,10 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "review @src/components/ for React best practices and anti-patterns",
-    "model": "o3"
+    "model": "claude-sonnet-4.5"
   }
 }
 ```
@@ -145,7 +145,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "refactor @src/legacy.js to use modern ES6+ syntax and async/await",
     "changeMode": true,
@@ -158,7 +158,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "extract reusable components from @src/pages/dashboard.tsx",
     "changeMode": true,
@@ -171,7 +171,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "organize and optimize imports in @src/**/*.ts using path aliases",
     "changeMode": true,
@@ -230,10 +230,10 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "find the bug causing null pointer exception in @src/auth/login.ts",
-    "model": "o3"
+    "model": "claude-sonnet-4.5"
   }
 }
 ```
@@ -242,7 +242,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "trace the execution flow when user clicks submit in @src/forms/contact.tsx"
   }
@@ -253,7 +253,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "explain this error and how to fix it: [paste error message]. Related files: @src/api/handler.ts"
   }
@@ -266,7 +266,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "generate OpenAPI/Swagger documentation for @src/api/routes/",
     "sandboxMode": "workspace-write"
@@ -278,7 +278,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "create a comprehensive README.md based on @package.json @src/",
     "model": "gpt-5"
@@ -290,7 +290,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "add explanatory comments to complex logic in @src/algorithms/",
     "changeMode": true
@@ -304,7 +304,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "migrate @src/components/ from React class components to functional components with hooks",
     "changeMode": true,
@@ -318,7 +318,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "update @src/ to use the new v5 API from library X (breaking changes in @CHANGELOG.md)",
     "changeMode": true,
@@ -331,7 +331,7 @@ First, verify the tool is working:
 
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "convert @src/utils/*.js to TypeScript with proper type definitions",
     "changeMode": true,
@@ -347,19 +347,19 @@ First, verify the tool is working:
 ```javascript
 // Analyze in parts
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "analyze @src/modules/auth/",
-    "model": "o4-mini"
+    "model": "claude-sonnet-4"
   }
 }
 
 // Then continue with next module
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "analyze @src/modules/payments/",
-    "model": "o4-mini"
+    "model": "claude-sonnet-4"
   }
 }
 ```
@@ -369,7 +369,7 @@ First, verify the tool is working:
 ```javascript
 // Start with critical paths
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "refactor critical performance paths in @src/core/",
     "changeMode": true,
@@ -383,7 +383,7 @@ First, verify the tool is working:
 ```javascript
 // Initial request
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "refactor all components in @src/components/",
     "changeMode": true
@@ -410,7 +410,7 @@ Always analyze before modifying:
 ```javascript
 // Step 1: Understand current state
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "analyze current implementation of @src/auth/",
     "sandboxMode": "read-only"
@@ -428,7 +428,7 @@ Always analyze before modifying:
 
 // Step 3: Implement changes
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "implement the top 3 improvements",
     "changeMode": true,
@@ -442,7 +442,7 @@ Always analyze before modifying:
 ```javascript
 // Use incremental approach
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "refactor @src/utils/helper.ts - start with pure functions only",
     "changeMode": true,
@@ -456,7 +456,7 @@ Always analyze before modifying:
 ```javascript
 // Review for issues
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "review @src/ for bugs, security issues, and performance problems",
     "sandboxMode": "read-only"
@@ -465,7 +465,7 @@ Always analyze before modifying:
 
 // Then fix identified issues
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "fix the critical issues identified in the review",
     "changeMode": true,
@@ -477,25 +477,30 @@ Always analyze before modifying:
 ## Tips for Effective Usage
 
 ### 1. Start Small
+
 Begin with single files or small directories before processing entire codebases.
 
 ### 2. Use Appropriate Models
-- **o4-mini**: Quick analysis, simple tasks
-- **o3**: Complex reasoning, detailed reviews
+
+- **claude-sonnet-4**: Quick analysis, balanced performance
+- **claude-sonnet-4.5**: Complex reasoning, detailed reviews
 - **gpt-5**: Large refactoring, comprehensive generation
 
 ### 3. Leverage Change Mode
+
 For any code modifications, use `changeMode: true` to get structured edits.
 
 ### 4. Set Clear Boundaries
+
 Use sandbox modes to control what the tool can access and modify.
 
 ### 5. Provide Context
+
 Include relevant background information for better results.
 
 ## Next Steps
 
 - [Advanced Usage](./advanced-usage.md)
 - [Brainstorming Examples](./brainstorming.md)
-- [API Reference](../api/tools/ask-codex.md)
+- [API Reference](../api/tools/ask.md)
 - [Troubleshooting](../resources/troubleshooting.md)

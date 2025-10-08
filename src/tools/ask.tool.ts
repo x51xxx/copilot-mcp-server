@@ -5,33 +5,82 @@ import { formatCopilotResponseForMCP } from '../utils/outputParser.js';
 import { STATUS_MESSAGES, ERROR_MESSAGES } from '../constants.js';
 
 const askArgsSchema = z.object({
-  prompt: z.string().min(1).describe("Task or question for GitHub Copilot CLI"),
-  addDir: z.union([z.string(), z.array(z.string())]).optional().describe("Add directories to allowed list for file access"),
-  allowAllTools: z.boolean().default(true).describe("Allow all tools to run automatically (required for non-interactive mode)"),
-  allowTool: z.union([z.string(), z.array(z.string())]).optional().describe("Allow specific tools to run"),
-  denyTool: z.union([z.string(), z.array(z.string())]).optional().describe("Deny specific tools (takes precedence over allowTool)"),
-  disableMcpServer: z.union([z.string(), z.array(z.string())]).optional().describe("Disable specific MCP servers"),
-  logDir: z.string().optional().describe("Set log file directory"),
-  logLevel: z.enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none']).optional().describe("Set the log level"),
-  noColor: z.boolean().optional().describe("Disable all color output"),
-  resume: z.union([z.string(), z.boolean()]).optional().describe("Resume from a previous session (optionally specify session ID)"),
-  screenReader: z.boolean().optional().describe("Enable screen reader optimizations"),
-  banner: z.boolean().optional().describe("Show the animated banner on startup"),
-  timeout: z.number().optional().describe("Maximum execution time in milliseconds"),
+  prompt: z
+    .string()
+    .min(1)
+    .describe(
+      "Task or question for GitHub Copilot CLI. Supports @ syntax for files/images (e.g., '@file.png', '@src/') and ! prefix for direct shell commands"
+    ),
+  model: z
+    .string()
+    .optional()
+    .describe(
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var or Copilot's default"
+    ),
+  addDir: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Add directories to allowed list for file access'),
+  allowAllTools: z
+    .boolean()
+    .default(true)
+    .describe('Allow all tools to run automatically (required for non-interactive mode)'),
+  allowTool: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe(
+      "Allow specific tools to run. Supports glob patterns (e.g., 'shell(npm run test:*)')"
+    ),
+  denyTool: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Deny specific tools (takes precedence over allowTool)'),
+  disableMcpServer: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Disable specific MCP servers'),
+  logDir: z.string().optional().describe('Set log file directory'),
+  logLevel: z
+    .enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none'])
+    .optional()
+    .describe('Set the log level'),
+  noColor: z.boolean().optional().describe('Disable all color output'),
+  resume: z
+    .union([z.string(), z.boolean()])
+    .optional()
+    .describe('Resume from a previous session (optionally specify session ID)'),
+  continue: z.boolean().optional().describe('Resume the most recent session'),
+  screenReader: z.boolean().optional().describe('Enable screen reader optimizations'),
+  banner: z.boolean().optional().describe('Show the animated banner on startup'),
+  timeout: z.number().optional().describe('Maximum execution time in milliseconds'),
 });
 
 export const askTool: UnifiedTool = {
   name: 'ask',
-  description: "Execute GitHub Copilot CLI with file analysis, tool management, and safety controls",
+  description:
+    'Execute GitHub Copilot CLI with file analysis, tool management, and safety controls',
   zodSchema: askArgsSchema,
   prompt: {
-    description: "Execute GitHub Copilot CLI with your task or question",
+    description: 'Execute GitHub Copilot CLI with your task or question',
   },
   category: 'utility',
   execute: async (args, onProgress) => {
     const {
-      prompt, addDir, allowAllTools, allowTool, denyTool, disableMcpServer,
-      logDir, logLevel, noColor, resume, screenReader, banner, timeout
+      prompt,
+      model,
+      addDir,
+      allowAllTools,
+      allowTool,
+      denyTool,
+      disableMcpServer,
+      logDir,
+      logLevel,
+      noColor,
+      resume,
+      continue: continueSession,
+      screenReader,
+      banner,
+      timeout,
     } = args;
 
     if (!prompt?.trim()) {
@@ -40,6 +89,7 @@ export const askTool: UnifiedTool = {
 
     try {
       const options: CopilotExecOptions = {
+        model: model as string,
         addDir: addDir as string | string[],
         allowAllTools: allowAllTools as boolean,
         allowTool: allowTool as string | string[],
@@ -49,16 +99,13 @@ export const askTool: UnifiedTool = {
         logLevel: logLevel as LogLevel,
         noColor: noColor as boolean,
         resume: resume as string | boolean,
+        continue: continueSession as boolean,
         screenReader: screenReader as boolean,
         banner: banner as boolean,
         timeoutMs: timeout as number,
       };
 
-      const result = await executeCopilot(
-        prompt as string,
-        options,
-        onProgress
-      );
+      const result = await executeCopilot(prompt as string, options, onProgress);
 
       // Format response with enhanced output parsing
       return formatCopilotResponseForMCP(result, true, true);
@@ -77,7 +124,11 @@ npm install -g @github/copilot-cli
 **Verification:** Run \`copilot --version\` to confirm installation.`;
       }
 
-      if (errorMessage.includes('authentication') || errorMessage.includes('unauthorized') || errorMessage.includes('login')) {
+      if (
+        errorMessage.includes('authentication') ||
+        errorMessage.includes('unauthorized') ||
+        errorMessage.includes('login')
+      ) {
         return `❌ **Authentication Failed**: Please log in to GitHub Copilot CLI
 
 **Setup Options:**
@@ -103,7 +154,11 @@ npm install -g @github/copilot-cli
 2. Simplify request: Break complex queries into smaller parts`;
       }
 
-      if (errorMessage.includes('tool') || errorMessage.includes('permission') || errorMessage.includes('denied')) {
+      if (
+        errorMessage.includes('tool') ||
+        errorMessage.includes('permission') ||
+        errorMessage.includes('denied')
+      ) {
         return `❌ **Tool Permission Error**: ${errorMessage}
 
 **Solutions:**
@@ -129,5 +184,5 @@ npm install -g @github/copilot-cli
 2. Check authentication: \`copilot /login\`
 3. Try simpler query first`;
     }
-  }
+  },
 };

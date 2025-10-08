@@ -72,8 +72,9 @@ If you enter a prompt and then decide you want to stop Copilot from completing t
 
 ### Include a specific file in your prompt
 
-To add a specific file to your prompt, use `@` followed by the relative path to the file. For example: 
-- `Explain @config/ci/ci-required-checks.yml` 
+To add a specific file to your prompt, use `@` followed by the relative path to the file. For example:
+
+- `Explain @config/ci/ci-required-checks.yml`
 - `Fix the bug in @src/app.js`
 
 This adds the contents of the file to your prompt as context for Copilot.
@@ -131,6 +132,7 @@ Copilot CLI comes with the GitHub MCP server already configured. This MCP server
 To extend the functionality available to you in Copilot CLI, you can add more MCP servers:
 
 1. Use the following slash command:
+
    ```
    /mcp add
    ```
@@ -292,6 +294,7 @@ For a complete list of the command line options and slash commands that you can 
 For additional information use one of the following commands in your terminal:
 
 ### Configuration settings
+
 ```bash
 copilot help config
 ```
@@ -299,16 +302,19 @@ copilot help config
 You can adjust the configuration settings by editing the `config.json` file, which is located, by default, in the `~/.config` directory. This location can be changed by setting the `XDG_CONFIG_HOME` environment variable.
 
 ### Environment variables
+
 ```bash
 copilot help environment
 ```
 
 ### Available logging levels
+
 ```bash
 copilot help logging
 ```
 
 ### Tool permissions
+
 ```bash
 copilot help permissions
 ```
@@ -322,7 +328,7 @@ For MCP-specific feedback or issues, please visit the [Copilot MCP Server reposi
 ## Next steps
 
 - **Learn about security**: [Security Considerations](./security)
-- **Understand tool permissions**: [Tool Permissions](./tool-permissions)  
+- **Understand tool permissions**: [Tool Permissions](./tool-permissions)
 - **Explore use cases**: [Use Cases](./use-cases)
 - **Try examples**: [Usage Examples](./usage-examples)
 
@@ -356,6 +362,7 @@ copilot -p "Add error handling to the database connection function in src/db.js"
 ## Interactive Mode Examples
 
 Start interactive mode:
+
 ```bash
 copilot
 ```
@@ -363,21 +370,25 @@ copilot
 Then try these prompts:
 
 ### Project analysis
+
 ```
 Analyze this React project and identify potential performance improvements
 ```
 
 ### Git operations
+
 ```
 Show me the last 3 commits and their changes
 ```
 
 ### Code refactoring
+
 ```
 Refactor the UserService class to use async/await instead of promises
 ```
 
 ### Documentation
+
 ```
 Generate API documentation for all endpoints in src/routes/
 ```
@@ -387,6 +398,7 @@ Generate API documentation for all endpoints in src/routes/
 ### Using ask-copilot tool
 
 #### Basic usage
+
 ```typescript
 {
   "prompt": "Explain the architecture of this Node.js application",
@@ -396,6 +408,7 @@ Generate API documentation for all endpoints in src/routes/
 ```
 
 #### Secure usage with limited permissions
+
 ```typescript
 {
   "prompt": "Review the security of the authentication module",
@@ -407,6 +420,7 @@ Generate API documentation for all endpoints in src/routes/
 ```
 
 #### Change mode for structured edits
+
 ```typescript
 {
   "prompt": "Update all React components to use functional components with hooks",
@@ -419,6 +433,7 @@ Generate API documentation for all endpoints in src/routes/
 ### Using batch-copilot tool
 
 #### Processing multiple files
+
 ```typescript
 {
   "tasks": [
@@ -446,6 +461,7 @@ Generate API documentation for all endpoints in src/routes/
 ```
 
 #### Parallel processing (use with caution)
+
 ```typescript
 {
   "tasks": [
@@ -455,7 +471,7 @@ Generate API documentation for all endpoints in src/routes/
       "priority": "high"
     },
     {
-      "task": "Run tests for services module", 
+      "task": "Run tests for services module",
       "target": "@src/services/",
       "priority": "high"
     }
@@ -470,6 +486,7 @@ Generate API documentation for all endpoints in src/routes/
 ### Using review-copilot tool
 
 #### Security review
+
 ```typescript
 {
   "target": "@src/auth/",
@@ -486,6 +503,7 @@ Generate API documentation for all endpoints in src/routes/
 ```
 
 #### Performance review
+
 ```typescript
 {
   "target": "@src/api/",
@@ -500,6 +518,7 @@ Generate API documentation for all endpoints in src/routes/
 ```
 
 #### Comprehensive code review
+
 ```typescript
 {
   "target": "@.",
@@ -573,6 +592,7 @@ copilot -p "The tests in test/user.test.js are failing. Analyze and fix the issu
 ### Troubleshooting MCP integration
 
 #### Test MCP connectivity
+
 ```typescript
 {
   "name": "ping",
@@ -583,6 +603,7 @@ copilot -p "The tests in test/user.test.js are failing. Analyze and fix the issu
 ```
 
 #### Check CLI versions
+
 ```typescript
 {
   "name": "version",
@@ -591,6 +612,7 @@ copilot -p "The tests in test/user.test.js are failing. Analyze and fix the issu
 ```
 
 #### Get help information
+
 ```typescript
 {
   "name": "help",
@@ -632,7 +654,7 @@ copilot -p "Perform a security audit of the authentication system" \
 # Step 1: Analyze current code
 copilot -p "Analyze this jQuery codebase and create a migration plan to React" --allow-all-tools
 
-# Step 2: Create migration scripts  
+# Step 2: Create migration scripts
 copilot -p "Create utility scripts to help migrate jQuery components to React" --allow-all-tools
 
 # Step 3: Migrate incrementally

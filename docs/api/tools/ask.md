@@ -1,34 +1,30 @@
-# ask-copilot
+# ask
 
 Execute GitHub Copilot CLI with file analysis, tool management, and safety controls.
 
 ## Description
 
-The `ask-copilot` tool provides a bridge to GitHub Copilot CLI, allowing you to leverage GitHub's AI assistant directly through the MCP protocol. It supports comprehensive tool permission management, directory access control, and various advanced features like session management and change mode for structured edits.
+The `ask` tool provides a bridge to GitHub Copilot CLI, allowing you to leverage GitHub's AI assistant directly through the MCP protocol. It supports comprehensive tool permission management, directory access control, and various advanced features like session management.
 
 ## Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `prompt` | string | ✅ | - | Task or question for GitHub Copilot CLI. Reference files with @ syntax if needed. |
-| `addDir` | string \| string[] | ❌ | - | Add directories to allowed list for file access |
-| `allowAllTools` | boolean | ❌ | `true` | Allow all tools to run automatically (required for non-interactive mode) |
-| `allowTool` | string \| string[] | ❌ | - | Allow specific tools to run |
-| `denyTool` | string \| string[] | ❌ | - | Deny specific tools (takes precedence over allowTool) |
-| `disableMcpServer` | string \| string[] | ❌ | - | Disable specific MCP servers |
-| `logDir` | string | ❌ | - | Set log file directory |
-| `logLevel` | enum | ❌ | - | Set the log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none` |
-| `noColor` | boolean | ❌ | - | Disable all color output |
-| `resume` | string \| boolean | ❌ | - | Resume from a previous session (optionally specify session ID) |
-| `screenReader` | boolean | ❌ | - | Enable screen reader optimizations |
-| `banner` | boolean | ❌ | - | Show the animated banner on startup |
-| `workingDir` | string | ❌ | - | Working directory for execution |
-| `changeMode` | boolean | ❌ | `false` | Return structured OLD/NEW edits for refactoring |
-| `chunkIndex` | number | ❌ | - | Chunk index (1-based) for paginated results |
-| `chunkCacheKey` | string | ❌ | - | Cache key for continuation |
-| `timeout` | number | ❌ | - | Maximum execution time in milliseconds |
-| `includeThinking` | boolean | ❌ | `true` | Include reasoning/thinking section in response |
-| `includeMetadata` | boolean | ❌ | `true` | Include configuration metadata in response |
+| Parameter          | Type               | Required | Default | Description                                                                  |
+| ------------------ | ------------------ | -------- | ------- | ---------------------------------------------------------------------------- |
+| `prompt`           | string             | ✅       | -       | Task or question for GitHub Copilot CLI. Supports @ syntax for files/images  |
+| `model`            | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, or `claude-sonnet-4.5`                 |
+| `addDir`           | string \| string[] | ❌       | -       | Add directories to allowed list for file access                              |
+| `allowAllTools`    | boolean            | ❌       | `true`  | Allow all tools to run automatically (required for non-interactive mode)     |
+| `allowTool`        | string \| string[] | ❌       | -       | Allow specific tools to run (supports glob patterns)                         |
+| `denyTool`         | string \| string[] | ❌       | -       | Deny specific tools (takes precedence over allowTool)                        |
+| `disableMcpServer` | string \| string[] | ❌       | -       | Disable specific MCP servers                                                 |
+| `logDir`           | string             | ❌       | -       | Set log file directory                                                       |
+| `logLevel`         | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none` |
+| `noColor`          | boolean            | ❌       | -       | Disable all color output                                                     |
+| `resume`           | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)               |
+| `continue`         | boolean            | ❌       | -       | Resume the most recent session                                               |
+| `screenReader`     | boolean            | ❌       | -       | Enable screen reader optimizations                                           |
+| `banner`           | boolean            | ❌       | -       | Show the animated banner on startup                                          |
+| `timeout`          | number             | ❌       | -       | Maximum execution time in milliseconds                                       |
 
 ## Examples
 
@@ -60,17 +56,7 @@ The `ask-copilot` tool provides a bridge to GitHub Copilot CLI, allowing you to 
 ```typescript
 {
   "prompt": "Analyze @src/components/UserProfile.tsx and suggest improvements",
-  "allowAllTools": true,
-  "addDir": ["./src"]
-}
-```
-
-### Change mode for structured edits
-
-```typescript
-{
-  "prompt": "Convert all class components in @src/components/ to functional components with hooks",
-  "changeMode": true,
+  "model": "claude-sonnet-4.5",
   "allowAllTools": true,
   "addDir": ["./src"]
 }
@@ -90,16 +76,18 @@ The `ask-copilot` tool provides a bridge to GitHub Copilot CLI, allowing you to 
 ### Tool permission examples
 
 #### Allow only specific tools
+
 ```typescript
 {
   "prompt": "Run tests for the user module",
   "allowAllTools": false,
   "allowTool": ["shell(npm test)", "shell(jest)"],
-  "workingDir": "./src/user"
+  "addDir": ["./src/user"]
 }
 ```
 
 #### Deny dangerous tools
+
 ```typescript
 {
   "prompt": "Analyze the codebase and suggest improvements",
@@ -113,15 +101,16 @@ The `ask-copilot` tool provides a bridge to GitHub Copilot CLI, allowing you to 
 
 The tool returns a formatted response that includes:
 
-- **GitHub Copilot Session**: Metadata about the session (if `includeMetadata` is true)
-- **Analysis**: Reasoning and thought process (if `includeThinking` is true)  
+- **GitHub Copilot Session**: Metadata about the session
+- **Analysis**: Reasoning and thought process
 - **Tool Executions**: List of tools that were executed (if any)
 - **Response**: The main response from GitHub Copilot CLI
 
 ### Example response
 
-```markdown
+````markdown
 **GitHub Copilot Session:**
+
 - Session: abc-123-def
 - Tools Used: 3 executions
 
@@ -129,6 +118,7 @@ The tool returns a formatted response that includes:
 I'll analyze the React component you've provided. Let me examine the file structure and identify any potential improvements.
 
 **Tool Executions:**
+
 - Executing tool: read file src/components/UserProfile.tsx
 - Running: npm test -- UserProfile.test.tsx
 - Executing tool: analyze code patterns
@@ -145,6 +135,8 @@ Here's the refactored version:
 ```tsx
 // Improved UserProfile component code...
 ```
+````
+
 ```
 
 ## Error handling
@@ -153,34 +145,45 @@ Common errors and their solutions:
 
 ### CLI not found
 ```
+
 ❌ Copilot CLI Not Found: GitHub Copilot CLI not found - please install with 'npm install -g @github/copilot-cli'
+
 ```
 
 ### Authentication failed
 ```
+
 ❌ Authentication Failed: Please log in to GitHub Copilot CLI
 
 Setup Options:
+
 1. Interactive Login: `copilot /login`
 2. Check Status: `copilot /user show`
+
 ```
 
 ### Directory access denied
 ```
+
 ❌ Directory Access Error: Permission denied accessing ./src
 
 Solutions:
+
 1. Add directory access: `addDir: "/path/to/directory"`
 2. Add multiple directories: `addDir: ["/path1", "/path2"]`
+
 ```
 
 ### Tool permission denied
 ```
+
 ❌ Tool Permission Error: Tool 'shell(git)' denied
 
 Solutions:
+
 1. Allow all tools: `allowAllTools: true`
 2. Allow specific tools: `allowTool: ["shell(git status)"]`
+
 ```
 
 ## Security considerations
@@ -202,4 +205,5 @@ Solutions:
 
 - [`batch-copilot`](./batch-copilot) - Process multiple tasks with Copilot CLI
 - [`review-copilot`](./review-copilot) - Comprehensive code review with Copilot CLI
-- [`ask-codex`](./ask-codex) - Legacy Codex CLI integration
+- [`ask`](./ask) - Legacy GitHub Copilot CLI integration
+```

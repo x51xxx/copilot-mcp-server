@@ -105,11 +105,15 @@ export function formatReviewFindings(review: ReviewOutput): string {
  */
 function getPriorityTag(priority?: number): string {
   switch (priority) {
-    case 0: return '[P0 🔴]';  // Blocking
-    case 1: return '[P1 🟠]';  // Urgent
-    case 2: return '[P2 🟡]';  // Normal
-    case 3: return '[P3 🔵]';  // Low
-    default: return '';
+    case 0:
+      return '[P0 🔴]'; // Blocking
+    case 1:
+      return '[P1 🟠]'; // Urgent
+    case 2:
+      return '[P2 🟡]'; // Normal
+    case 3:
+      return '[P3 🔵]'; // Low
+    default:
+      return '';
   }
 }
-

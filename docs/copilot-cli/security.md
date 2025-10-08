@@ -34,16 +34,19 @@ Typically, you can choose from three options:
 3. **No, and tell Copilot what to do differently (Esc)**
 
 ### Option 1: Yes (once only)
+
 Allows Copilot to run this particular command, this time only. The next time it needs to use this tool, it will ask you again.
 
 ### Option 2: Yes, approve for session
-Allows Copilot to use this tool again, without asking you for permission, for the duration of the currently running session. It will ask for your approval again in new sessions, or if you resume the current session in the future. 
+
+Allows Copilot to use this tool again, without asking you for permission, for the duration of the currently running session. It will ask for your approval again in new sessions, or if you resume the current session in the future.
 
 ::: warning Important
 If you choose this option, you are allowing Copilot to use this tool in any way it thinks is appropriate. For example, if Copilot asks you to allow it to run the command `rm ./this-file.txt`, and you choose option 2, then Copilot can run any `rm` command (for example, `rm -rf ./*`) during the current run of this session, without asking for your approval.
 :::
 
 ### Option 3: No, try differently
+
 Cancels the proposed command and allows you to tell Copilot to try a different approach.
 
 ## Security implications of automatic tool approval
@@ -57,26 +60,31 @@ You can mitigate the risks associated with using the automatic approval options 
 ### Best practices for secure usage
 
 #### 1. Environment isolation
+
 - Use Copilot CLI in containerized environments for sensitive operations
 - Consider using virtual machines for testing destructive operations
 - Limit network access when possible
 
 #### 2. Directory management
+
 - Always launch from trusted project directories
 - Avoid launching from home directories or system directories
 - Regularly review and clean up trusted directories list
 
 #### 3. Tool permissions
+
 - Start with restrictive permissions and gradually expand as needed
 - Review tool approval requests carefully
 - Use session-scoped approvals rather than permanent ones
 
 #### 4. Code review practices
+
 - Always review generated code before committing
 - Test changes in isolated environments first
 - Use version control to track all changes made by Copilot
 
 #### 5. Data protection
+
 - Avoid using Copilot CLI in directories with sensitive data
 - Be cautious with repositories containing secrets or credentials
 - Use `.gitignore` and similar files to protect sensitive files
@@ -86,17 +94,21 @@ You can mitigate the risks associated with using the automatic approval options 
 When using GitHub Copilot CLI through the MCP server, additional security considerations apply:
 
 ### Tool permissions in MCP
+
 The MCP server provides additional safety layers:
+
 - `allowAllTools`: Grants broad permissions (use with caution)
 - `allowTool`: Grants specific tool permissions
 - `denyTool`: Explicitly denies specific tools (takes precedence)
 
 ### Directory access control
+
 - `addDir`: Explicitly grants access to specific directories
 - Multiple directories can be granted access simultaneously
 - Access is scoped to the specific MCP session
 
 ### Example secure configuration
+
 ```typescript
 {
   "prompt": "Review the security of @src/auth.js",
@@ -108,6 +120,7 @@ The MCP server provides additional safety layers:
 ```
 
 This configuration:
+
 - Disables automatic tool approval
 - Allows only read and analyze operations
 - Explicitly denies dangerous shell commands
@@ -116,12 +129,15 @@ This configuration:
 ## Monitoring and auditing
 
 ### Logging
+
 GitHub Copilot CLI provides comprehensive logging:
+
 - Set `logLevel` to track all operations
 - Use `logDir` to centralize logs for audit purposes
 - Monitor logs for unexpected or suspicious activities
 
 ### Session management
+
 - Use session IDs to track operations across time
 - Review session history for compliance purposes
 - Implement session timeout policies where appropriate

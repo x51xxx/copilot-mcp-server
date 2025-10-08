@@ -4,7 +4,7 @@ Test connectivity and echo messages through the MCP server.
 
 ## Overview
 
-The `ping` tool provides a simple way to verify that the Codex MCP Tool is properly installed and functioning. It echoes back the provided message, confirming the communication pipeline is working.
+The `ping` tool provides a simple way to verify that the Copilot MCP Tool is properly installed and functioning. It echoes back the provided message, confirming the communication pipeline is working.
 
 ## Syntax
 
@@ -20,6 +20,7 @@ The `ping` tool provides a simple way to verify that the Codex MCP Tool is prope
 ## Parameters
 
 ### prompt (optional)
+
 - **Type:** `string`
 - **Default:** `""` (empty string)
 - **Description:** Message to echo back
@@ -55,17 +56,17 @@ The `ping` tool provides a simple way to verify that the Codex MCP Tool is prope
 {
   "name": "ping",
   "arguments": {
-    "prompt": "Codex MCP Tool v1.0.0"
+    "prompt": "Copilot MCP Tool v1.0.0"
   }
 }
-// Returns: "Pong! Codex MCP Tool v1.0.0"
+// Returns: "Pong! Copilot MCP Tool v1.0.0"
 ```
 
 ## Use Cases
 
 ### Initial Setup Verification
 
-After installing Codex MCP Tool, use ping to verify:
+After installing Copilot MCP Tool, use ping to verify:
 
 ```bash
 # In Claude Code
@@ -80,16 +81,19 @@ After installing Codex MCP Tool, use ping to verify:
 When troubleshooting:
 
 1. **First test ping:**
+
 ```javascript
 { "name": "ping", "arguments": {} }
 ```
 
-2. **If ping works, test Codex CLI:**
+2. **If ping works, test GitHub Copilot CLI:**
+
 ```javascript
 { "name": "help", "arguments": {} }
 ```
 
 3. **If ping fails:**
+
 - Check MCP server configuration
 - Restart Claude client
 - Verify npm package installation
@@ -122,6 +126,7 @@ Pong! [your message]
 ### Error Response
 
 If the MCP server is not running:
+
 ```
 Error: MCP server not responding
 ```
@@ -133,37 +138,41 @@ Error: MCP server not responding
 If ping doesn't respond:
 
 1. **Check configuration:**
+
 ```json
 {
   "mcpServers": {
     "codex-cli": {
       "command": "npx",
-      "args": ["-y", "@trishchuk/codex-mcp-tool"]
+      "args": ["-y", "@trishchuk/copilot-mcp-server"]
     }
   }
 }
 ```
 
 2. **Verify installation:**
+
 ```bash
-npm list -g @trishchuk/codex-mcp-tool
+npm list -g @trishchuk/copilot-mcp-server
 ```
 
 3. **Restart client:**
+
 - Claude Desktop: Quit and restart
 - Claude Code: Run `/restart`
 
 ### Delayed Response
 
 Normal ping should respond instantly. If delayed:
+
 - Check system resources
 - Verify Node.js version >= 18.0.0
 - Check for conflicting processes
 
 ## Related Tools
 
-- [help](./help.md) - Show Codex CLI help
-- [ask-codex](./ask-codex.md) - Execute Codex commands
+- [help](./help.md) - Show GitHub Copilot CLI help
+- [ask](./ask.md) - Execute Codex commands
 - [timeout-test](./timeout-test.md) - Test long operations
 
 ## See Also

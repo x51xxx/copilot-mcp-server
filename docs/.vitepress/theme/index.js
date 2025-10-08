@@ -5,7 +5,6 @@ import DiagramModal from '../components/DiagramModal.vue'
 import CodeBlock from '../components/CodeBlock.vue'
 import ClientGrid from '../components/ClientGrid.vue'
 import './custom.css'
-import './custom-codex.css'
 
 export default {
   extends: DefaultTheme,

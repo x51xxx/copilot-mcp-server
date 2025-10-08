@@ -9,15 +9,16 @@ import { randomBytes } from 'crypto';
 // Type-safe enums for Copilot CLI
 export enum LogLevel {
   Error = 'error',
-  Warning = 'warning', 
+  Warning = 'warning',
   Info = 'info',
   Debug = 'debug',
   All = 'all',
   Default = 'default',
-  None = 'none'
+  None = 'none',
 }
 
 export interface CopilotExecOptions {
+  readonly model?: string; // AI model to use (e.g., "claude-sonnet-4.5", "gpt-4o") - v0.0.329+
   readonly addDir?: string | string[];
   readonly allowAllTools?: boolean;
   readonly allowTool?: string | string[];
@@ -27,6 +28,7 @@ export interface CopilotExecOptions {
   readonly logLevel?: LogLevel;
   readonly noColor?: boolean;
   readonly resume?: string | boolean; // session ID or true for latest
+  readonly continue?: boolean; // Resume most recent session - v0.0.336+
   readonly screenReader?: boolean;
   readonly banner?: boolean;
   readonly workingDir?: string;
@@ -45,7 +47,13 @@ export async function executeCopilotCLI(
   onProgress?: (newOutput: string) => void
 ): Promise<string> {
   const args: string[] = [];
-  
+
+  // Model selection (prioritize: explicit param > env var > default)
+  const model = options?.model || process.env.COPILOT_MODEL;
+  if (model) {
+    args.push('--model', model);
+  }
+
   // Build command arguments
   if (options?.addDir) {
     const dirs = Array.isArray(options.addDir) ? options.addDir : [options.addDir];
@@ -74,7 +82,9 @@ export async function executeCopilotCLI(
   }
 
   if (options?.disableMcpServer) {
-    const servers = Array.isArray(options.disableMcpServer) ? options.disableMcpServer : [options.disableMcpServer];
+    const servers = Array.isArray(options.disableMcpServer)
+      ? options.disableMcpServer
+      : [options.disableMcpServer];
     for (const server of servers) {
       args.push('--disable-mcp-server', server);
     }
@@ -108,15 +118,19 @@ export async function executeCopilotCLI(
     }
   }
 
+  if (options?.continue) {
+    args.push('--continue');
+  }
+
   // Add the prompt using -p/--prompt flag
   args.push('-p', prompt);
-  
+
   // Check if prompt is too long for command line (OS dependent, ~100KB is safe)
   const promptSizeBytes = Buffer.byteLength(prompt, 'utf8');
   const useStdin = options?.useStdinForLongPrompts !== false && promptSizeBytes > 100 * 1024;
-  
+
   let tempFile: string | undefined;
-  
+
   try {
     if (useStdin) {
       // For very long prompts, we might need to use a different approach
@@ -125,32 +139,28 @@ export async function executeCopilotCLI(
     }
 
     // Use detailed execution for better error handling
-    const result = await executeCommandDetailed(
-      CLI.COMMANDS.COPILOT, 
-      args, 
-      {
-        onProgress,
-        timeoutMs: options?.timeoutMs,
-        maxOutputBytes: options?.maxOutputBytes,
-        retry: options?.retry
-      }
-    );
-    
+    const result = await executeCommandDetailed(CLI.COMMANDS.COPILOT, args, {
+      onProgress,
+      timeoutMs: options?.timeoutMs,
+      maxOutputBytes: options?.maxOutputBytes,
+      retry: options?.retry,
+    });
+
     if (!result.ok) {
       // Try to salvage partial output if available
       if (result.partialStdout && result.partialStdout.length > 1000) {
         Logger.warn('Command failed but partial output available, attempting to use it');
         return result.partialStdout;
       }
-      
+
       const errorMessage = result.stderr || 'Unknown error';
       throw new Error(
-        result.timedOut 
+        result.timedOut
           ? `Copilot CLI timed out after ${options?.timeoutMs || 600000}ms`
           : `Copilot CLI failed with exit code ${result.code}: ${errorMessage}`
       );
     }
-    
+
     return result.stdout;
   } catch (error) {
     Logger.error('Copilot CLI execution failed:', error);
@@ -177,6 +187,12 @@ export async function executeCopilot(
 ): Promise<string> {
   const args: string[] = [];
 
+  // Model selection (prioritize: explicit param > env var > default)
+  const model = options?.model || process.env.COPILOT_MODEL;
+  if (model) {
+    args.push('--model', model);
+  }
+
   // Directory access control
   if (options?.addDir || options?.workingDir) {
     const dirs: string[] = [];
@@ -186,7 +202,7 @@ export async function executeCopilot(
     if (options.workingDir) {
       dirs.push(options.workingDir);
     }
-    
+
     for (const dir of dirs) {
       args.push('--add-dir', dir);
     }
@@ -213,7 +229,9 @@ export async function executeCopilot(
 
   // Other options
   if (options?.disableMcpServer) {
-    const servers = Array.isArray(options.disableMcpServer) ? options.disableMcpServer : [options.disableMcpServer];
+    const servers = Array.isArray(options.disableMcpServer)
+      ? options.disableMcpServer
+      : [options.disableMcpServer];
     for (const server of servers) {
       args.push('--disable-mcp-server', server);
     }
@@ -247,22 +265,22 @@ export async function executeCopilot(
     }
   }
 
+  if (options?.continue) {
+    args.push('--continue');
+  }
+
   // Add the prompt
   args.push('-p', prompt);
 
   try {
     const timeoutMs = options?.timeoutMs || 600000; // 10 minutes default
 
-    const result = await executeCommandDetailed(
-      CLI.COMMANDS.COPILOT,
-      args,
-      {
-        onProgress,
-        timeoutMs,
-        maxOutputBytes: options?.maxOutputBytes,
-        retry: options?.retry
-      }
-    );
+    const result = await executeCommandDetailed(CLI.COMMANDS.COPILOT, args, {
+      onProgress,
+      timeoutMs,
+      maxOutputBytes: options?.maxOutputBytes,
+      retry: options?.retry,
+    });
 
     if (!result.ok) {
       // Enhanced error handling with specific messages
@@ -272,7 +290,11 @@ export async function executeCopilot(
         throw new Error('Copilot CLI not found. Install with: npm install -g @github/copilot-cli');
       }
 
-      if (errorMessage.includes('authentication') || errorMessage.includes('unauthorized') || errorMessage.includes('login')) {
+      if (
+        errorMessage.includes('authentication') ||
+        errorMessage.includes('unauthorized') ||
+        errorMessage.includes('login')
+      ) {
         throw new Error('Authentication failed. Run "copilot --help" to see login options');
       }
 
@@ -280,8 +302,14 @@ export async function executeCopilot(
         throw new Error('Rate limit exceeded. Please wait and try again');
       }
 
-      if (errorMessage.includes('permission') || errorMessage.includes('tool') || errorMessage.includes('denied')) {
-        throw new Error(`Tool permission denied. Try adjusting --allow-tool or --allow-all-tools: ${errorMessage}`);
+      if (
+        errorMessage.includes('permission') ||
+        errorMessage.includes('tool') ||
+        errorMessage.includes('denied')
+      ) {
+        throw new Error(
+          `Tool permission denied. Try adjusting --allow-tool or --allow-all-tools: ${errorMessage}`
+        );
       }
 
       if (errorMessage.includes('directory') || errorMessage.includes('access')) {

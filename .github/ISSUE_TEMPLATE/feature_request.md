@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new feature for Codex MCP Tool
+about: Suggest a new feature for Copilot MCP Tool
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

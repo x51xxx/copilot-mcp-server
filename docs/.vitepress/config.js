@@ -31,13 +31,7 @@ export default withMermaid(
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
-      { 
-        text: 'CLI Tools',
-        items: [
-          { text: 'GitHub Copilot CLI', link: '/copilot-cli/overview' },
-          { text: 'Codex CLI (Legacy)', link: '/codex-cli-getting-started' }
-        ]
-      }
+      { text: 'GitHub Copilot CLI', link: '/copilot-cli/overview' }
     ],
 
     sidebar: [
@@ -46,8 +40,7 @@ export default withMermaid(
         collapsed: false,
         items: [
           { text: 'Overview', link: '/' },
-          { text: 'Installation', link: '/getting-started' },
-          { text: 'Migration Guide', link: '/migration-guide' }
+          { text: 'Installation', link: '/getting-started' }
         ]
       },
       {
@@ -63,22 +56,11 @@ export default withMermaid(
         ]
       },
       {
-        text: 'Codex CLI (Legacy)',
-        collapsed: true,
-        items: [
-          { text: 'Getting Started', link: '/codex-cli-getting-started' },
-          { text: 'Model Selection', link: '/concepts/models' },
-          { text: 'Sandbox Modes', link: '/concepts/sandbox' }
-        ]
-      },
-      {
         text: 'Core Concepts',
         collapsed: false,
         items: [
           { text: 'How It Works', link: '/concepts/how-it-works' },
-          { text: 'File Analysis (@)', link: '/concepts/file-analysis' },
-          { text: 'Change Mode Format', link: '/concepts/change-mode' },
-          { text: 'Authentication', link: '/authentication' }
+          { text: 'File Analysis (@)', link: '/concepts/file-analysis' }
         ]
       },
       {
@@ -86,19 +68,11 @@ export default withMermaid(
         collapsed: false,
         items: [
           {
-            text: 'Copilot Tools',
+            text: 'Primary Tools',
             items: [
-              { text: 'ask-copilot', link: '/api/tools/ask-copilot' },
-              { text: 'batch-copilot', link: '/api/tools/batch-copilot' },
-              { text: 'review-copilot', link: '/api/tools/review-copilot' }
-            ]
-          },
-          {
-            text: 'Codex Tools (Legacy)',
-            items: [
-              { text: 'ask-codex', link: '/api/tools/ask-codex' },
-              { text: 'batch-codex', link: '/api/tools/batch-codex' },
-              { text: 'review-codex', link: '/api/tools/review-codex' }
+              { text: 'ask', link: '/api/tools/ask' },
+              { text: 'batch', link: '/api/tools/batch' },
+              { text: 'review', link: '/api/tools/review' }
             ]
           },
           {
@@ -108,7 +82,6 @@ export default withMermaid(
               { text: 'ping', link: '/api/tools/ping' },
               { text: 'help', link: '/api/tools/help' },
               { text: 'version', link: '/api/tools/version' },
-              { text: 'fetch-chunk', link: '/api/tools/fetch-chunk' },
               { text: 'timeout-test', link: '/api/tools/timeout-test' }
             ]
           }
@@ -119,10 +92,8 @@ export default withMermaid(
         collapsed: false,
         items: [
           { text: 'Basic Usage', link: '/examples/basic-usage' },
-          { text: 'Code Review', link: '/examples/code-review' },
-          { text: 'Batch Processing', link: '/examples/batch-processing' },
-          { text: 'Brainstorming', link: '/examples/brainstorming' },
-          { text: 'Advanced Patterns', link: '/examples/advanced-patterns' }
+          { text: 'Advanced Usage', link: '/examples/advanced-usage' },
+          { text: 'Brainstorming', link: '/examples/brainstorming' }
         ]
       },
       {
@@ -130,21 +101,9 @@ export default withMermaid(
         collapsed: false,
         items: [
           { text: 'Troubleshooting', link: '/resources/troubleshooting' },
-          { text: 'FAQ', link: '/resources/faq' },
-          { text: 'Configuration', link: '/config' },
-          { text: 'Contributing', link: '/contributing' }
+          { text: 'FAQ', link: '/resources/faq' }
         ]
       },
-      {
-        text: 'Advanced',
-        collapsed: true,
-        items: [
-          { text: 'Advanced Usage', link: '/advanced' },
-          { text: 'Platform Sandboxing', link: '/platform-sandboxing' },
-          { text: 'Experimental Features', link: '/experimental' },
-          { text: 'Release Management', link: '/release_management' }
-        ]
-      }
     ],
 
     socialLinks: [
@@ -180,7 +139,7 @@ export default withMermaid(
     },
 
     editLink: {
-      pattern: 'https://github.com/x51xxx/codex-mcp-tool/edit/main/docs/:path',
+      pattern: 'https://github.com/x51xxx/copilot-mcp-server/edit/main/docs/:path',
       text: 'Edit this page on GitHub'
     },
 

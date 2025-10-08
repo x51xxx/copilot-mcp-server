@@ -6,7 +6,7 @@
     </template>
     <template #nav-bar-content-before>
       <div class="nav-warning">
-        🏷️ <span>1.0.0</span>
+        🏷️ <span>1.1.0</span>
       </div>
     </template>
     <template #sidebar-nav-after>
@@ -40,7 +40,7 @@ const { Layout } = DefaultTheme
 const route = useRoute()
 const { frontmatter } = useData()
 
-const isHomePage = computed(() => route.path === '/' || route.path === '/codex-mcp-tool/')
+const isHomePage = computed(() => route.path === '/' || route.path === '/copilot-mcp-tool/')
 const isFundingPage = computed(() => route.path.includes('/funding'))
 </script>
 

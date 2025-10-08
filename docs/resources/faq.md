@@ -2,13 +2,14 @@
 
 ## General Questions
 
-### What is Codex MCP Tool?
+### What is Copilot MCP Tool?
 
-Codex MCP Tool is a Model Context Protocol (MCP) server that bridges OpenAI's Codex CLI with MCP-compatible clients like Claude Desktop and Claude Code. It enables seamless AI-powered code analysis, generation, and brainstorming directly within your development environment.
+Copilot MCP Tool is a Model Context Protocol (MCP) server that bridges OpenAI's GitHub Copilot CLI with MCP-compatible clients like Claude Desktop and Claude Code. It enables seamless AI-powered code analysis, generation, and brainstorming directly within your development environment.
 
-### Why use Codex MCP Tool instead of Codex CLI directly?
+### Why use Copilot MCP Tool instead of GitHub Copilot CLI directly?
 
-**Benefits of using Codex MCP Tool:**
+**Benefits of using Copilot MCP Tool:**
+
 - **Non-interactive execution** - No manual prompts or confirmations needed
 - **Integration** - Works seamlessly with Claude Desktop/Code
 - **File references** - Use @ syntax to include files easily
@@ -18,40 +19,45 @@ Codex MCP Tool is a Model Context Protocol (MCP) server that bridges OpenAI's Co
 
 ### Which AI models are supported?
 
-Currently supported OpenAI models:
-- **GPT-5** - 400K context, best for complex tasks
-- **o3** - 200K context, advanced reasoning
-- **o4-mini** - 200K context, fast and cost-effective
+Currently supported models via GitHub Copilot CLI:
+
+- **gpt-5** - OpenAI's latest model, best for complex tasks
+- **claude-sonnet-4** - Anthropic's Claude model, balanced performance
+- **claude-sonnet-4.5** - Anthropic's advanced Claude model, superior reasoning
 
 ### Is this an official OpenAI tool?
 
-No, this is a community-developed integration tool. It uses the official Codex CLI but is not directly affiliated with or endorsed by OpenAI.
+No, this is a community-developed integration tool. It uses the official GitHub Copilot CLI but is not directly affiliated with or endorsed by OpenAI.
 
 ## Installation & Setup
 
 ### What are the prerequisites?
 
 1. **Node.js** >= 18.0.0
-2. **Codex CLI** installed and authenticated
+2. **GitHub Copilot CLI** installed and authenticated
 3. **MCP client** (Claude Desktop or Claude Code)
 4. **OpenAI API access** with appropriate model permissions
 
-### How do I install Codex MCP Tool?
+### How do I install Copilot MCP Tool?
 
 **For Claude Code (recommended):**
+
 ```bash
-claude mcp add codex-cli -- npx -y @trishchuk/codex-mcp-tool
+claude mcp add copilot-cli -- npx -y @trishchuk/copilot-mcp-server
 ```
 
 **For Claude Desktop:**
+
 ```bash
-npm install -g @trishchuk/codex-mcp-tool
+npm install -g @trishchuk/copilot-mcp-server
 ```
+
 Then add to your configuration file.
 
 ### Where is the configuration file located?
 
 **Claude Desktop configuration locations:**
+
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 - **Linux:** `~/.config/claude/claude_desktop_config.json`
@@ -59,15 +65,16 @@ Then add to your configuration file.
 ### How do I verify the installation?
 
 Test with these commands in your MCP client:
+
 ```javascript
 // Test connectivity
-/codex-cli:ping "Hello"
+/copilot-cli:ping "Hello"
 
 // Check help
-/codex-cli:help
+/copilot-cli:help
 
 // Simple task
-/codex-cli:ask-codex "explain what Python decorators are"
+/copilot-cli:ask "explain what Python decorators are"
 ```
 
 ## Usage Questions
@@ -75,38 +82,40 @@ Test with these commands in your MCP client:
 ### How do I reference files in my prompts?
 
 Use the @ syntax:
+
 ```javascript
 // Single file
-"explain @src/main.ts"
+'explain @src/main.ts';
 
 // Multiple files
-"compare @src/old.ts @src/new.ts"
+'compare @src/old.ts @src/new.ts';
 
 // Glob patterns
-"review @src/*.ts"
-"analyze @src/**/*.ts"
+'review @src/*.ts';
+'analyze @src/**/*.ts';
 
 // With paths containing spaces (use quotes)
-"@\"My Documents/project/file.ts\""
+"@\"My Documents/project/file.ts\"";
 ```
 
 ### What's the difference between sandbox modes?
 
-| Mode | Read | Write | Delete | Execute | Use Case |
-|------|------|-------|--------|---------|----------|
-| `read-only` | ✅ | ❌ | ❌ | ❌ | Analysis, reviews |
-| `workspace-write` | ✅ | ✅ | ⚠️ | ❌ | Refactoring, generation |
-| `danger-full-access` | ✅ | ✅ | ✅ | ✅ | Full automation |
+| Mode                 | Read | Write | Delete | Execute | Use Case                |
+| -------------------- | ---- | ----- | ------ | ------- | ----------------------- |
+| `read-only`          | ✅   | ❌    | ❌     | ❌      | Analysis, reviews       |
+| `workspace-write`    | ✅   | ✅    | ⚠️     | ❌      | Refactoring, generation |
+| `danger-full-access` | ✅   | ✅    | ✅     | ✅      | Full automation         |
 
 ### How do I use different models?
 
 Specify the model in your request:
+
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "your task",
-    "model": "gpt-5"  // or "o3", "o4-mini"
+    "model": "gpt-5"  // or "claude-sonnet-4", "claude-sonnet-4.5"
   }
 }
 ```
@@ -114,6 +123,7 @@ Specify the model in your request:
 ### What is changeMode?
 
 ChangeMode returns structured file edits instead of conversational responses:
+
 ```javascript
 {
   "prompt": "refactor this code",
@@ -125,6 +135,7 @@ ChangeMode returns structured file edits instead of conversational responses:
 ### How do I handle large responses?
 
 For large changeMode responses, use chunking:
+
 ```javascript
 // Initial request returns cacheKey
 { "prompt": "large refactor", "changeMode": true }
@@ -137,16 +148,17 @@ For large changeMode responses, use chunking:
 
 ### What tools are available?
 
-1. **ask-codex** - Execute Codex commands with file references
+1. **ask** - Execute GitHub Copilot CLI commands with file references
 2. **brainstorm** - Generate ideas with structured methodologies
 3. **ping** - Test connectivity
-4. **help** - Show Codex CLI help
+4. **help** - Show GitHub Copilot CLI help
 5. **fetch-chunk** - Retrieve cached response chunks
 6. **timeout-test** - Test long-running operations
 
 ### How does the brainstorm tool work?
 
 The brainstorm tool offers multiple methodologies:
+
 ```javascript
 {
   "prompt": "ways to improve performance",
@@ -160,6 +172,7 @@ The brainstorm tool offers multiple methodologies:
 ### Can I create custom tools?
 
 Yes! Create a new tool in `src/tools/`:
+
 ```typescript
 // src/tools/my-tool.tool.ts
 export const myTool: UnifiedTool = {
@@ -168,13 +181,14 @@ export const myTool: UnifiedTool = {
   schema: MyToolSchema,
   async execute(args, progress) {
     // Implementation
-  }
+  },
 };
 ```
 
 ### How do progress notifications work?
 
 Long-running operations send progress updates every 25 seconds:
+
 ```javascript
 // In tool implementation
 progress?.('Processing file 1 of 10...');
@@ -186,23 +200,25 @@ progress?.('Generating output...');
 
 ### Is my code sent to OpenAI?
 
-Yes, when you use Codex MCP Tool, your prompts and referenced files are sent to OpenAI's API for processing. Ensure you:
+Yes, when you use Copilot MCP Tool, your prompts and referenced files are sent to OpenAI's API for processing. Ensure you:
+
 - Don't include sensitive data
 - Review OpenAI's data usage policies
 - Use appropriate sandbox modes
 
 ### How do approval policies work?
 
-| Policy | Description | Use Case |
-|--------|-------------|----------|
-| `never` | No approvals needed | Trusted automation |
-| `on-request` | Approve each action | Careful operation |
-| `on-failure` | Approve on errors | Semi-automated |
-| `untrusted` | Always require approval | Maximum safety |
+| Policy       | Description             | Use Case           |
+| ------------ | ----------------------- | ------------------ |
+| `never`      | No approvals needed     | Trusted automation |
+| `on-request` | Approve each action     | Careful operation  |
+| `on-failure` | Approve on errors       | Semi-automated     |
+| `untrusted`  | Always require approval | Maximum safety     |
 
 ### Can I use this in production?
 
-Codex MCP Tool is designed for development environments. For production:
+Copilot MCP Tool is designed for development environments. For production:
+
 - Review security implications
 - Implement proper access controls
 - Monitor API usage and costs
@@ -211,9 +227,10 @@ Codex MCP Tool is designed for development environments. For production:
 ### Are API keys stored securely?
 
 API keys should be:
+
 - Set via environment variables (`OPENAI_API_KEY`)
 - Never committed to version control
-- Managed through Codex CLI authentication
+- Managed through GitHub Copilot CLI authentication
 - Rotated regularly
 
 ## Troubleshooting
@@ -221,8 +238,9 @@ API keys should be:
 ### Why is the tool not responding?
 
 Check:
-1. Codex CLI is installed: `codex --version`
-2. Authentication is valid: `codex auth status`
+
+1. GitHub Copilot CLI is installed: `copilot --version`
+2. Authentication is valid: `copilot /user show`
 3. MCP server is running: restart your client
 4. Configuration syntax is correct
 
@@ -230,24 +248,24 @@ Check:
 
 ```bash
 # Enable all debug output
-DEBUG=* npx @trishchuk/codex-mcp-tool
+DEBUG=* npx @trishchuk/copilot-mcp-server
 
 # Enable specific modules
-DEBUG=codex-mcp:* npx @trishchuk/codex-mcp-tool
+DEBUG=copilot-mcp:* npx @trishchuk/copilot-mcp-server
 ```
 
 ### What if I get "model not available"?
 
-1. Check available models: `codex models list`
+1. Check available models: `copilot /model`
 2. Verify API access permissions
-3. Try a different model (e.g., `o4-mini`)
-4. Check OpenAI account status
+3. Try a different model (e.g., `claude-sonnet-4`)
+4. Check GitHub Copilot account status
 
 ### How do I report bugs?
 
-1. Check [existing issues](https://github.com/x51xxx/codex-mcp-tool/issues)
+1. Check [existing issues](https://github.com/x51xxx/copilot-mcp-tool/issues)
 2. Gather diagnostic information
-3. Use the [bug report template](https://github.com/x51xxx/codex-mcp-tool/issues/new?template=bug_report.md)
+3. Use the [bug report template](https://github.com/x51xxx/copilot-mcp-tool/issues/new?template=bug_report.md)
 4. Include reproducible steps
 
 ## Advanced Topics
@@ -255,10 +273,11 @@ DEBUG=codex-mcp:* npx @trishchuk/codex-mcp-tool
 ### Can I use multiple MCP servers simultaneously?
 
 Yes, configure multiple servers in your MCP client:
+
 ```json
 {
   "mcpServers": {
-    "codex-cli": { ... },
+    "copilot-cli": { ... },
     "another-server": { ... }
   }
 }
@@ -266,21 +285,23 @@ Yes, configure multiple servers in your MCP client:
 
 ### How do I contribute to the project?
 
-See our [Contributing Guide](https://github.com/x51xxx/codex-mcp-tool/blob/main/CONTRIBUTING.md):
+See our [Contributing Guide](https://github.com/x51xxx/copilot-mcp-tool/blob/main/CONTRIBUTING.md):
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
 
-### What's the difference between Codex and GPT models?
+### What's the difference between different AI models?
 
-- **Codex** - Specialized for code generation (deprecated)
-- **GPT-5** - General purpose with code capabilities
-- **o3/o4** - Optimized models with reasoning focus
+- **gpt-5** - OpenAI's latest general-purpose model with strong code capabilities
+- **claude-sonnet-4** - Anthropic's balanced model, good for most tasks
+- **claude-sonnet-4.5** - Anthropic's advanced model with enhanced reasoning capabilities
 
 ### Can I use this with other AI providers?
 
-Currently, Codex MCP Tool is designed for OpenAI's models via Codex CLI. For other providers, consider:
+Currently, Copilot MCP Tool is designed for OpenAI's models via GitHub Copilot CLI. For other providers, consider:
+
 - Forking and adapting the codebase
 - Using different MCP servers
 - Contributing multi-provider support
@@ -289,31 +310,24 @@ Currently, Codex MCP Tool is designed for OpenAI's models via Codex CLI. For oth
 
 ### How can I improve response times?
 
-1. **Use faster models:** `o4-mini` is fastest
+1. **Use faster models:** `claude-sonnet-4` for balanced speed and quality
 2. **Be specific with file references:** Avoid broad globs
 3. **Enable caching:** Reuse common analyses
 4. **Process in batches:** Break large tasks
 
 ### What are the context limits?
 
-| Model | Context Window | Recommended Max |
-|-------|---------------|-----------------|
-| GPT-5 | 400K tokens | 350K tokens |
-| o3 | 200K tokens | 180K tokens |
-| o4-mini | 200K tokens | 180K tokens |
+Context limits vary by model. Check GitHub Copilot CLI documentation for current limits:
+
+| Model             | Provider  |
+| ----------------- | --------- |
+| gpt-5             | OpenAI    |
+| claude-sonnet-4   | Anthropic |
+| claude-sonnet-4.5 | Anthropic |
 
 ### How do I estimate costs?
 
-```javascript
-// Rough cost calculation
-tokens = prompt_length + file_content_length + response_length
-cost = (tokens / 1000) * model_price_per_1k
-
-// Model prices (as of 2025)
-// GPT-5: $0.015/1K input, $0.060/1K output
-// o3: $0.015/1K tokens
-// o4-mini: $0.00015/1K input, $0.0006/1K output
-```
+Costs are managed through your GitHub Copilot subscription. The tool doesn't directly charge for API usage - check your GitHub Copilot billing for usage costs.
 
 ## Future & Roadmap
 
@@ -329,18 +343,18 @@ cost = (tokens / 1000) * model_price_per_1k
 
 ### How do I request features?
 
-1. Check [existing requests](https://github.com/x51xxx/codex-mcp-tool/issues?label=enhancement)
-2. Use the [feature request template](https://github.com/x51xxx/codex-mcp-tool/issues/new?template=feature_request.md)
+1. Check [existing requests](https://github.com/x51xxx/copilot-mcp-tool/issues?label=enhancement)
+2. Use the [feature request template](https://github.com/x51xxx/copilot-mcp-tool/issues/new?template=feature_request.md)
 3. Provide use cases and examples
 
 ### Is there a roadmap?
 
-Check our [GitHub Projects](https://github.com/x51xxx/codex-mcp-tool/projects) for planned features and progress.
+Check our [GitHub Projects](https://github.com/x51xxx/copilot-mcp-tool/projects) for planned features and progress.
 
 ## Related Resources
 
 - [Installation Guide](../getting-started.md)
 - [Troubleshooting Guide](./troubleshooting.md)
-- [API Reference](../api/tools/ask-codex.md)
+- [API Reference](../api/tools/ask-copilot.md)
 - [Examples](../examples/basic-usage.md)
-- [Contributing](https://github.com/x51xxx/codex-mcp-tool/blob/main/CONTRIBUTING.md)
+- [Contributing](https://github.com/x51xxx/copilot-mcp-tool/blob/main/CONTRIBUTING.md)

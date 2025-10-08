@@ -23,7 +23,7 @@ GitHub Copilot CLI is in public preview and subject to change.
 ## Supported operating systems
 
 - **Linux**
-- **macOS** 
+- **macOS**
 - **Windows** from within Windows Subsystem for Linux (WSL). Native Windows support in Powershell is available, but experimental.
 
 For installation instructions, see [Installing GitHub Copilot CLI](./installation).
@@ -33,6 +33,7 @@ For installation instructions, see [Installing GitHub Copilot CLI](./installatio
 GitHub Copilot CLI can be used in two modes:
 
 ### Interactive mode
+
 Start an interactive session by using the `copilot` command. This is the default mode for working with the CLI.
 
 In this mode, you can prompt Copilot to answer a question, or perform a task. You can react to Copilot's responses in the same session.
@@ -40,6 +41,7 @@ In this mode, you can prompt Copilot to answer a question, or perform a task. Yo
 ![Screenshot of the Welcome message in the interactive mode of Copilot](https://docs.github.com/assets/cb-76024/images/help/copilot/copilot-cli-welcome.png)
 
 ### Programmatic mode
+
 You can also pass the CLI a single prompt directly on the command line. You do this by using the `-p` or `--prompt` command-line option. To allow Copilot to modify and execute files you should also use one of the approval options (see [Tool Permissions](./tool-permissions) later in this article). For example:
 
 ```bash

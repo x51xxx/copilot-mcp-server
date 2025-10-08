@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug in Codex MCP Tool
+about: Report a bug in Copilot MCP Tool
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -17,8 +17,8 @@ assignees: ''
   - [ ] Claude Desktop
   - [ ] Claude Code
   - [ ] Other (please specify):
-- **Codex CLI version**: <!-- Run: codex --version -->
-- **Codex MCP Tool version**: 
+- **GitHub Copilot CLI version**: <!-- Run: codex --version -->
+- **Copilot MCP Tool version**: 
 
 ## To Reproduce
 Steps to reproduce the behavior:
@@ -66,6 +66,6 @@ Steps to reproduce the behavior:
 
 ## Checklist
 - [ ] I have checked existing issues for duplicates
-- [ ] I have verified Codex CLI is properly installed and authenticated
+- [ ] I have verified GitHub Copilot CLI is properly installed and authenticated
 - [ ] I have tried with the latest version of the tool
 - [ ] I have included all relevant error messages

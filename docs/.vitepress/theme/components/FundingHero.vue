@@ -14,7 +14,7 @@
     <div class="hero-content">
       <h1 class="hero-title">
         <span class="title-main">Support Development</span>
-        <span class="title-sub">of Codex MCP Tool</span>
+        <span class="title-sub">of Copilot MCP Tool</span>
       </h1>
       
       <p class="hero-description">
@@ -34,8 +34,8 @@
           Sponsor on GitHub
         </a>
 
-        <a 
-          href="https://github.com/x51xxx/codex-mcp-tool" 
+        <a
+          href="https://github.com/x51xxx/copilot-mcp-server"
           target="_blank"
           rel="noopener"
           class="action-button action-primary"

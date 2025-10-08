@@ -1,42 +1,76 @@
 import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
 import { executeCopilot, LogLevel } from '../utils/copilotExecutor.js';
-import {
-  ERROR_MESSAGES,
-  STATUS_MESSAGES,
-} from '../constants.js';
+import { ERROR_MESSAGES, STATUS_MESSAGES } from '../constants.js';
 
 // Define task type for batch operations
 const batchTaskSchema = z.object({
-  task: z.string().describe("Atomic task description"),
-  target: z.string().optional().describe("Target files/directories (use @ syntax)"),
-  priority: z.enum(['high', 'normal', 'low']).default('normal').describe("Task priority"),
+  task: z.string().describe('Atomic task description'),
+  target: z.string().optional().describe('Target files/directories (use @ syntax)'),
+  priority: z.enum(['high', 'normal', 'low']).default('normal').describe('Task priority'),
 });
 
 const batchArgsSchema = z.object({
-  tasks: z.array(batchTaskSchema).min(1).describe("Array of atomic tasks to delegate to GitHub Copilot"),
-  addDir: z.union([z.string(), z.array(z.string())]).optional().describe("Add directories to allowed list for file access"),
-  allowAllTools: z.boolean().default(true).describe("Allow all tools to run automatically"),
-  allowTool: z.union([z.string(), z.array(z.string())]).optional().describe("Allow specific tools"),
-  denyTool: z.union([z.string(), z.array(z.string())]).optional().describe("Deny specific tools"),
-  logLevel: z.enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none']).optional().describe("Set the log level"),
-  parallel: z.boolean().default(false).describe("Execute tasks in parallel (experimental)"),
-  stopOnError: z.boolean().default(true).describe("Stop execution if any task fails"),
-  timeout: z.number().optional().describe("Maximum execution time per task in milliseconds"),
+  tasks: z
+    .array(batchTaskSchema)
+    .min(1)
+    .describe('Array of atomic tasks to delegate to GitHub Copilot'),
+  model: z
+    .string()
+    .optional()
+    .describe(
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var"
+    ),
+  addDir: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Add directories to allowed list for file access'),
+  allowAllTools: z.boolean().default(true).describe('Allow all tools to run automatically'),
+  allowTool: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe("Allow specific tools. Supports glob patterns (e.g., 'shell(npm run test:*)')"),
+  denyTool: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Deny specific tools'),
+  logLevel: z
+    .enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none'])
+    .optional()
+    .describe('Set the log level'),
+  resume: z
+    .union([z.string(), z.boolean()])
+    .optional()
+    .describe('Resume from a previous session (optionally specify session ID)'),
+  continue: z.boolean().optional().describe('Resume the most recent session'),
+  parallel: z.boolean().default(false).describe('Execute tasks in parallel (experimental)'),
+  stopOnError: z.boolean().default(true).describe('Stop execution if any task fails'),
+  timeout: z.number().optional().describe('Maximum execution time per task in milliseconds'),
 });
 
 export const batchTool: UnifiedTool = {
-  name: "batch",
-  description: "Delegate multiple atomic tasks to GitHub Copilot CLI for batch processing. Ideal for repetitive operations, mass refactoring, and automated code transformations",
+  name: 'batch',
+  description:
+    'Delegate multiple atomic tasks to GitHub Copilot CLI for batch processing. Ideal for repetitive operations, mass refactoring, and automated code transformations',
   zodSchema: batchArgsSchema,
   prompt: {
-    description: "Execute multiple atomic Copilot tasks in batch mode for efficient automation",
+    description: 'Execute multiple atomic Copilot tasks in batch mode for efficient automation',
   },
   category: 'copilot',
   execute: async (args, onProgress) => {
     const {
-      tasks, addDir, allowAllTools, allowTool, denyTool, logLevel,
-      parallel, stopOnError, timeout
+      tasks,
+      model,
+      addDir,
+      allowAllTools,
+      allowTool,
+      denyTool,
+      logLevel,
+      resume,
+      continue: continueSession,
+      parallel,
+      stopOnError,
+      timeout,
     } = args;
     const taskList = tasks as Array<{ task: string; target?: string; priority: string }>;
 
@@ -44,7 +78,13 @@ export const batchTool: UnifiedTool = {
       throw new Error('No tasks provided for batch execution');
     }
 
-    const results: Array<{ task: string; success: boolean; output?: string; error?: string; duration?: number }> = [];
+    const results: Array<{
+      task: string;
+      success: boolean;
+      output?: string;
+      error?: string;
+      duration?: number;
+    }> = [];
     let totalSuccess = 0;
     let totalFailed = 0;
 
@@ -54,29 +94,35 @@ export const batchTool: UnifiedTool = {
     // Sort tasks by priority
     const sortedTasks = taskList.sort((a, b) => {
       const priorities = { high: 3, normal: 2, low: 1 };
-      return priorities[b.priority as keyof typeof priorities] - priorities[a.priority as keyof typeof priorities];
+      return (
+        priorities[b.priority as keyof typeof priorities] -
+        priorities[a.priority as keyof typeof priorities]
+      );
     });
 
-    const executeTask = async (taskItem: typeof taskList[0], index: number) => {
+    const executeTask = async (taskItem: (typeof taskList)[0], index: number) => {
       const taskStart = Date.now();
       onProgress?.(`📋 Task ${index + 1}/${taskList.length}: ${taskItem.task.slice(0, 50)}...`);
 
       try {
-        const taskPrompt = taskItem.target 
+        const taskPrompt = taskItem.target
           ? `${taskItem.task} for ${taskItem.target}`
           : taskItem.task;
 
         const result = await executeCopilot(
           taskPrompt,
           {
+            model: model as string,
             addDir: addDir as string | string[],
             allowAllTools: allowAllTools as boolean,
             allowTool: allowTool as string | string[],
             denyTool: denyTool as string | string[],
             logLevel: logLevel as LogLevel,
-            timeoutMs: timeout as number || 120000, // 2 minutes default per task
+            resume: resume as string | boolean,
+            continue: continueSession as boolean,
+            timeoutMs: (timeout as number) || 120000, // 2 minutes default per task
           },
-          (progress) => onProgress?.(`  └─ ${progress.slice(0, 100)}...`)
+          progress => onProgress?.(`  └─ ${progress.slice(0, 100)}...`)
         );
 
         const duration = Date.now() - taskStart;
@@ -84,22 +130,22 @@ export const batchTool: UnifiedTool = {
           task: taskItem.task,
           success: true,
           output: result,
-          duration
+          duration,
         });
-        
+
         totalSuccess++;
         onProgress?.(`✅ Task ${index + 1} completed (${duration}ms)`);
       } catch (error) {
         const duration = Date.now() - taskStart;
         const errorMessage = error instanceof Error ? error.message : String(error);
-        
+
         results.push({
           task: taskItem.task,
           success: false,
           error: errorMessage,
-          duration
+          duration,
         });
-        
+
         totalFailed++;
         onProgress?.(`❌ Task ${index + 1} failed: ${errorMessage.slice(0, 100)}...`);
 
@@ -120,7 +166,7 @@ export const batchTool: UnifiedTool = {
         onProgress?.('📝 Running tasks sequentially...');
         for (let i = 0; i < sortedTasks.length; i++) {
           await executeTask(sortedTasks[i], i);
-          
+
           // Add small delay between tasks to avoid rate limiting
           if (i < sortedTasks.length - 1) {
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -145,7 +191,9 @@ export const batchTool: UnifiedTool = {
 - **Execution Mode:** ${parallel ? 'Parallel' : 'Sequential'}
 
 ## Successful Tasks (${successfulResults.length})
-${successfulResults.map((result, i) => `
+${successfulResults
+  .map(
+    (result, i) => `
 ### Task ${i + 1}: ${result.task}
 **Duration:** ${result.duration}ms
 
@@ -153,21 +201,26 @@ ${successfulResults.map((result, i) => `
 \`\`\`
 ${result.output}
 \`\`\`
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Failed Tasks (${failedResults.length})
-${failedResults.map((result, i) => `
+${failedResults
+  .map(
+    (result, i) => `
 ### Task ${i + 1}: ${result.task}
 **Duration:** ${result.duration}ms
 **Error:** ${result.error}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ---
 *GitHub Copilot CLI Batch Processing completed at ${new Date().toISOString()}*`;
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      
+
       return `# GitHub Copilot Batch Execution Report - INCOMPLETE
 
 ## Summary
@@ -178,15 +231,19 @@ ${failedResults.map((result, i) => `
 - **Stopped Due To:** ${errorMessage}
 
 ## Completed Tasks
-${results.map((result, i) => `
+${results
+  .map(
+    (result, i) => `
 ### Task ${i + 1}: ${result.task} - ${result.success ? '✅ Success' : '❌ Failed'}
 ${result.success ? result.output : `Error: ${result.error}`}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Error Details
 ${errorMessage}
 
 **Suggestion:** Consider setting \`stopOnError: false\` to continue processing remaining tasks even when individual tasks fail.`;
     }
-  }
+  },
 };

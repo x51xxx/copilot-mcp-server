@@ -4,10 +4,12 @@ The following sections provide examples of tasks you can complete with GitHub Co
 
 ## Local tasks
 
-From within a project directory you can ask Copilot to make a change to the code in the project. 
+From within a project directory you can ask Copilot to make a change to the code in the project.
 
 ### Code Modification
+
 **Example**: Change styling in your project
+
 ```bash
 copilot -p "Change the background-color of H1 headings to dark blue" --allow-all-tools
 ```
@@ -15,13 +17,17 @@ copilot -p "Change the background-color of H1 headings to dark blue" --allow-all
 Copilot finds the CSS file where H1 headings are defined and changes the color value.
 
 ### File History Analysis
+
 **Example**: Review recent changes
+
 ```bash
 copilot -p "Show me the last 5 changes made to the CHANGELOG.md file. Who changed the file, when, and give a brief summary of the changes they made" --allow-all-tools
 ```
 
 ### Code Improvement
+
 **Example**: Enhance existing code
+
 ```bash
 copilot -p "Suggest improvements to content.js" --allow-all-tools
 ```
@@ -31,7 +37,9 @@ copilot -p "Rewrite the readme in this project to make it more accessible to new
 ```
 
 ### Git Operations
+
 **Example**: Version control tasks
+
 ```bash
 copilot -p "Commit the changes to this repo" --allow-all-tools
 ```
@@ -41,13 +49,17 @@ copilot -p "Revert the last commit, leaving the changes unstaged" --allow-all-to
 ```
 
 ### Application Creation
+
 **Example**: Build applications from scratch
+
 ```bash
 copilot -p "Use the create-next-app kit and tailwind CSS to create a next.js app. The app should be a dashboard built with data from the GitHub API. It should track this project's build success rate, average build duration, number of failed builds, and automated test pass rate. After creating the app, give me easy to follow instructions on how to build, run, and view the app in my browser." --allow-all-tools
 ```
 
 ### Troubleshooting
+
 **Example**: Debug and fix issues
+
 ```bash
 copilot -p "You said: 'The application is now running on http://localhost:3002 and is fully functional!' but when I browse to that URL I get 'This site can't be reached'" --allow-all-tools
 ```
@@ -55,7 +67,9 @@ copilot -p "You said: 'The application is now running on http://localhost:3002 a
 ## Tasks involving GitHub.com
 
 ### Fetching GitHub Data
+
 **Example**: List your work
+
 ```bash
 copilot -p "List my open PRs" --allow-all-tools
 ```
@@ -67,13 +81,17 @@ copilot -p "List all open issues assigned to me in OWNER/REPO" --allow-all-tools
 ```
 
 ### Working on Issues
+
 **Example**: Start working on an assigned issue
+
 ```bash
 copilot -p "I've been assigned this issue: https://github.com/octo-org/octo-repo/issues/1234. Start working on this for me in a suitably named branch." --allow-all-tools
 ```
 
 ### Creating Pull Requests
+
 **Example**: Make changes and create PR
+
 ```bash
 copilot -p "In the root of this repo, add a Node script called user-info.js that outputs information about the user who ran the script. Create a pull request to add this file to the repo on GitHub." --allow-all-tools
 ```
@@ -85,13 +103,17 @@ copilot -p "Create a PR that updates the README at https://github.com/octo-org/o
 Copilot creates a pull request on github.com, on your behalf. You are marked as the pull request author.
 
 ### Issue Management
+
 **Example**: Create issues
+
 ```bash
 copilot -p "Raise an improvement issue in octo-org/octo-repo. In src/someapp/somefile.py the \`file = open('data.txt', 'r')\` block opens a file but never closes it." --allow-all-tools
 ```
 
 ### Code Review
+
 **Example**: Review pull request changes
+
 ```bash
 copilot -p "Check the changes made in PR https://github.com/octo-org/octo-repo/pull/57575. Report any serious errors you find in these changes." --allow-all-tools
 ```
@@ -99,7 +121,9 @@ copilot -p "Check the changes made in PR https://github.com/octo-org/octo-repo/p
 Copilot responds in the CLI with a summary of any problems it finds.
 
 ### Pull Request Management
+
 **Example**: Manage PRs
+
 ```bash
 copilot -p "Merge all of the open PRs that I've created in octo-org/octo-repo" --allow-all-tools
 ```
@@ -109,7 +133,9 @@ copilot -p "Close PR #11 on octo-org/octo-repo" --allow-all-tools
 ```
 
 ### Finding Issues
+
 **Example**: Discover good first issues
+
 ```bash
 copilot -p "Use the Github MCP server to find good first issues for a new team member to work on from octo-org/octo-repo" --allow-all-tools
 ```
@@ -119,12 +145,15 @@ If you know that a specific MCP server can achieve a particular task, then speci
 :::
 
 ### GitHub Actions
+
 **Example**: Find workflows
+
 ```bash
 copilot -p "List any Actions workflows in this repo that add comments to PRs" --allow-all-tools
 ```
 
 **Example**: Create GitHub Actions workflow
+
 ```bash
 copilot -p "Branch off from main and create a github actions workflow that will run on pull requests, or can be run manually. The workflow should run eslint to check for problems in the changes made in the PR. If warnings or errors are found these should be shown as messages in the diff view of the PR. I want to prevent code with errors from being merged into main so, if any errors are found, the workflow should cause the PR check to fail. Push the new branch and create a pull request." --allow-all-tools
 ```
@@ -134,7 +163,9 @@ copilot -p "Branch off from main and create a github actions workflow that will 
 When using GitHub Copilot CLI through the MCP server, you can leverage additional capabilities:
 
 ### Batch Processing
+
 **Example**: Process multiple tasks
+
 ```typescript
 // Using batch-copilot tool
 {
@@ -156,7 +187,9 @@ When using GitHub Copilot CLI through the MCP server, you can leverage additiona
 ```
 
 ### Comprehensive Code Review
+
 **Example**: Multi-faceted code review
+
 ```typescript
 // Using review-copilot tool
 {
@@ -169,7 +202,9 @@ When using GitHub Copilot CLI through the MCP server, you can leverage additiona
 ```
 
 ### Structured Analysis
+
 **Example**: File analysis with @ syntax
+
 ```bash
 ask-copilot: "Analyze @src/main.ts and explain the architecture patterns used"
 ```

@@ -9,13 +9,13 @@
     <div class="support-content">
       <div class="support-header">
         <div class="support-text">
-          <h3 class="support-title">Support Codex MCP Tool</h3>
+          <h3 class="support-title">Support Copilot MCP Tool</h3>
           <p class="support-description">
-            Does codex-mcp-tool help you?<br><br>Your support helps maintain & improve this open source project.
+            Does copilot-mcp-tool help you?<br><br>Your support helps maintain & improve this open source project.
           </p>
         </div>
-        <a 
-          href="/codex-mcp-tool/funding" 
+        <a
+          href="/copilot-mcp-tool/funding" 
           class="transparency-link"
           @mouseenter="handleMouseEnter"
           @mousemove="handleMouseMove"

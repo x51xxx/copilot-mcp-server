@@ -1,56 +1,66 @@
-# review-copilot
+# review
 
 Comprehensive code review using GitHub Copilot CLI with multiple review types and detailed reporting.
 
 ## Description
 
-The `review-copilot` tool provides sophisticated code review capabilities using GitHub Copilot CLI. It supports multiple review types (security, performance, code quality, architecture, etc.), severity filtering, and comprehensive reporting with fix suggestions and priority ranking.
+The `review` tool provides sophisticated code review capabilities using GitHub Copilot CLI. It supports multiple review types (security, performance, code quality, architecture, etc.), severity filtering, and comprehensive reporting with fix suggestions and priority ranking.
 
 ## Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `target` | string | ✅ | - | Target files/directories to review (use @ syntax, e.g., '@src/app.js' or '@src/') |
-| `reviewType` | enum | ❌ | `comprehensive` | Type of review: `code-quality`, `security`, `performance`, `best-practices`, `architecture`, `testing`, `documentation`, `accessibility`, `comprehensive` |
-| `severity` | enum | ❌ | - | Minimum severity level: `low`, `medium`, `high`, `critical` |
-| `outputFormat` | enum | ❌ | `markdown` | Output format: `markdown`, `json`, `text` |
-| `includeFixSuggestions` | boolean | ❌ | `true` | Include specific fix suggestions |
-| `includePriorityRanking` | boolean | ❌ | `true` | Include priority ranking for issues |
-| `excludePatterns` | string[] | ❌ | `[]` | File patterns to exclude (glob patterns) |
-| `maxIssues` | number | ❌ | `20` | Maximum number of issues to report (1-100) |
-| `workingDir` | string | ❌ | - | Working directory for review |
-| `addDir` | string \| string[] | ❌ | - | Additional directories to grant access |
-| `timeout` | number | ❌ | - | Maximum execution time in milliseconds |
-| `allowAllTools` | boolean | ❌ | `true` | Allow all tools for comprehensive analysis |
-| `generateReport` | boolean | ❌ | `true` | Generate a comprehensive review report |
+| Parameter                | Type               | Required | Default         | Description                                                                                                                                               |
+| ------------------------ | ------------------ | -------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `target`                 | string             | ✅       | -               | Target files/directories to review (use @ syntax)                                                                                                         |
+| `reviewType`             | enum               | ❌       | `comprehensive` | Type of review: `code-quality`, `security`, `performance`, `best-practices`, `architecture`, `testing`, `documentation`, `accessibility`, `comprehensive` |
+| `model`                  | string             | ❌       | -               | AI model: `gpt-5`, `claude-sonnet-4`, or `claude-sonnet-4.5`                                                                                              |
+| `severity`               | enum               | ❌       | -               | Minimum severity level: `low`, `medium`, `high`, `critical`                                                                                               |
+| `outputFormat`           | enum               | ❌       | `markdown`      | Output format: `markdown`, `json`, `text`                                                                                                                 |
+| `includeFixSuggestions`  | boolean            | ❌       | `true`          | Include specific fix suggestions                                                                                                                          |
+| `includePriorityRanking` | boolean            | ❌       | `true`          | Include priority ranking for issues                                                                                                                       |
+| `excludePatterns`        | string[]           | ❌       | `[]`            | File patterns to exclude (glob patterns)                                                                                                                  |
+| `maxIssues`              | number             | ❌       | `20`            | Maximum number of issues to report (1-100)                                                                                                                |
+| `addDir`                 | string \| string[] | ❌       | -               | Additional directories to grant access                                                                                                                    |
+| `timeout`                | number             | ❌       | -               | Maximum execution time in milliseconds                                                                                                                    |
+| `allowAllTools`          | boolean            | ❌       | `true`          | Allow all tools for comprehensive analysis                                                                                                                |
+| `resume`                 | string \| boolean  | ❌       | -               | Resume from a previous session (optionally specify session ID)                                                                                            |
+| `continue`               | boolean            | ❌       | -               | Resume the most recent session                                                                                                                            |
 
 ## Review types
 
 ### `security`
+
 Focuses on security vulnerabilities, authentication issues, input validation, XSS, SQL injection, CSRF, and secure coding practices.
 
-### `performance`  
+### `performance`
+
 Focuses on performance bottlenecks, inefficient algorithms, memory usage, caching opportunities, and optimization potential.
 
 ### `code-quality`
+
 Focuses on code structure, readability, maintainability, SOLID principles, design patterns, and clean code practices.
 
 ### `best-practices`
+
 Focuses on language-specific best practices, conventions, idiomatic code, and industry standards.
 
 ### `architecture`
+
 Focuses on system design, component coupling, separation of concerns, scalability, and architectural patterns.
 
 ### `testing`
+
 Focuses on test coverage, test quality, test patterns, edge cases, and testing best practices.
 
 ### `documentation`
+
 Focuses on code documentation, comments, README files, API documentation, and knowledge sharing.
 
 ### `accessibility`
+
 Focuses on web accessibility (WCAG), semantic HTML, ARIA attributes, keyboard navigation, and inclusive design.
 
 ### `comprehensive`
+
 Performs a comprehensive review covering security, performance, code quality, best practices, and architecture.
 
 ## Examples
@@ -72,7 +82,7 @@ Performs a comprehensive review covering security, performance, code quality, be
 ```typescript
 {
   "target": "@src/",
-  "reviewType": "performance", 
+  "reviewType": "performance",
   "severity": "high",
   "excludePatterns": ["*.test.js", "node_modules/**", "dist/**"],
   "maxIssues": 15,
@@ -89,7 +99,7 @@ Performs a comprehensive review covering security, performance, code quality, be
   "severity": "low",
   "excludePatterns": [
     "node_modules/**",
-    "dist/**", 
+    "dist/**",
     "build/**",
     "*.test.js",
     "*.spec.ts"
@@ -136,7 +146,7 @@ Performs a comprehensive review covering security, performance, code quality, be
 
 ### Markdown output (default)
 
-```markdown
+````markdown
 # Security Code Review Report
 
 **Target:** `@src/auth/`  
@@ -147,6 +157,7 @@ Performs a comprehensive review covering security, performance, code quality, be
 ---
 
 **GitHub Copilot Session:**
+
 - Session: abc-123-def
 - Tools Used: 5 executions
 
@@ -158,6 +169,7 @@ I'll analyze the authentication module for security vulnerabilities, focusing on
 ## Critical Issues (2)
 
 ### 1. SQL Injection Vulnerability
+
 **File:** `src/auth/login.js:42`  
 **Severity:** Critical  
 **Priority:** High
@@ -166,17 +178,21 @@ I'll analyze the authentication module for security vulnerabilities, focusing on
 Direct string concatenation in SQL query allows SQL injection attacks.
 
 **Current Code:**
+
 ```javascript
 const query = `SELECT * FROM users WHERE email = '${email}'`;
 ```
+````
 
 **Fix Suggestion:**
+
 ```javascript
 const query = 'SELECT * FROM users WHERE email = ?';
 const result = await db.query(query, [email]);
 ```
 
-### 2. Password Storage Issue  
+### 2. Password Storage Issue
+
 **File:** `src/auth/register.js:28`
 **Severity:** Critical
 **Priority:** High
@@ -185,6 +201,7 @@ const result = await db.query(query, [email]);
 Passwords are stored in plaintext without proper hashing.
 
 **Fix Suggestion:**
+
 ```javascript
 const bcrypt = require('bcrypt');
 const hashedPassword = await bcrypt.hash(password, 12);
@@ -193,6 +210,7 @@ const hashedPassword = await bcrypt.hash(password, 12);
 ## High Issues (3)
 
 ### 3. Missing Rate Limiting
+
 **File:** `src/auth/login.js:15`
 **Severity:** High
 **Priority:** High
@@ -201,18 +219,20 @@ const hashedPassword = await bcrypt.hash(password, 12);
 Login endpoint lacks rate limiting, vulnerable to brute force attacks.
 
 **Fix Suggestion:**
+
 ```javascript
 const rateLimit = require('express-rate-limit');
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5 // limit each IP to 5 requests per windowMs
+  max: 5, // limit each IP to 5 requests per windowMs
 });
 ```
 
 ---
 
 **GitHub Copilot CLI Review completed** ✨
-```
+
+````
 
 ### JSON output
 
@@ -226,7 +246,7 @@ const loginLimiter = rateLimit({
     "totalIssues": 8,
     "severityBreakdown": {
       "critical": 2,
-      "high": 3, 
+      "high": 3,
       "medium": 2,
       "low": 1
     }
@@ -252,30 +272,33 @@ const loginLimiter = rateLimit({
     "copilotVersion": "0.0.327"
   }
 }
-```
+````
 
 ## Severity levels
 
-| Severity | Description | Examples |
-|----------|-------------|----------|
-| `critical` | Issues that pose immediate security risks or cause system failures | SQL injection, XSS vulnerabilities, exposed secrets |
-| `high` | Serious issues that should be addressed soon | Missing authentication, performance bottlenecks, architectural flaws |
-| `medium` | Important improvements that enhance code quality | Code duplication, missing error handling, suboptimal patterns |
-| `low` | Minor suggestions for code improvement | Naming conventions, code organization, documentation |
+| Severity   | Description                                                        | Examples                                                             |
+| ---------- | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `critical` | Issues that pose immediate security risks or cause system failures | SQL injection, XSS vulnerabilities, exposed secrets                  |
+| `high`     | Serious issues that should be addressed soon                       | Missing authentication, performance bottlenecks, architectural flaws |
+| `medium`   | Important improvements that enhance code quality                   | Code duplication, missing error handling, suboptimal patterns        |
+| `low`      | Minor suggestions for code improvement                             | Naming conventions, code organization, documentation                 |
 
 ## Output formats
 
 ### Markdown
+
 - **Best for**: Human-readable reports, documentation, pull request comments
 - **Features**: Rich formatting, code blocks, clear structure
 - **Use case**: Code review workflows, documentation generation
 
 ### JSON
+
 - **Best for**: Programmatic processing, integration with other tools
 - **Features**: Structured data, easy parsing, metadata inclusion
 - **Use case**: CI/CD pipelines, automated quality gates, metrics collection
 
 ### Text
+
 - **Best for**: Simple logging, basic reporting
 - **Features**: Plain text output, minimal formatting
 - **Use case**: Terminal output, basic logging systems
@@ -288,7 +311,7 @@ Use glob patterns to exclude files from review:
 {
   "excludePatterns": [
     "node_modules/**",        // Dependencies
-    "dist/**",               // Build output  
+    "dist/**",               // Build output
     "build/**",              // Build directory
     "*.test.js",             // Test files
     "*.spec.ts",             // Spec files
@@ -304,6 +327,7 @@ Use glob patterns to exclude files from review:
 ## Performance considerations
 
 ### Large codebases
+
 ```typescript
 {
   "target": "@src/",
@@ -317,6 +341,7 @@ Use glob patterns to exclude files from review:
 ```
 
 ### Focused reviews
+
 ```typescript
 {
   "target": "@src/security/", // Specific directory
@@ -333,7 +358,7 @@ Use glob patterns to exclude files from review:
 # .github/workflows/code-review.yml
 - name: Security Review
   run: |
-    npx @trishchuk/copilot-mcp-tool review-copilot \
+    npx @trishchuk/copilot-mcp-server review-copilot \
       --target "@src/" \
       --reviewType "security" \
       --severity "medium" \
@@ -345,18 +370,18 @@ Use glob patterns to exclude files from review:
 
 ```javascript
 // pre-commit-review.js
-const { reviewCopilot } = require('@trishchuk/copilot-mcp-tool');
+const { reviewCopilot } = require('@trishchuk/copilot-mcp-server');
 
 async function preCommitReview() {
   const result = await reviewCopilot({
-    target: "@src/",
-    reviewType: "code-quality",
-    severity: "high",
-    maxIssues: 10
+    target: '@src/',
+    reviewType: 'code-quality',
+    severity: 'high',
+    maxIssues: 10,
   });
-  
-  if (result.includes("Critical") || result.includes("High")) {
-    console.error("High or critical issues found. Please fix before committing.");
+
+  if (result.includes('Critical') || result.includes('High')) {
+    console.error('High or critical issues found. Please fix before committing.');
     process.exit(1);
   }
 }
@@ -365,6 +390,7 @@ async function preCommitReview() {
 ## Best practices
 
 ### 1. Start with focused reviews
+
 ```typescript
 // Good: Focused on specific area
 {
@@ -372,7 +398,7 @@ async function preCommitReview() {
   "reviewType": "security"
 }
 
-// Avoid: Too broad initially  
+// Avoid: Too broad initially
 {
   "target": "@.",
   "reviewType": "comprehensive"
@@ -380,6 +406,7 @@ async function preCommitReview() {
 ```
 
 ### 2. Use appropriate severity filters
+
 ```typescript
 // For critical fixes
 {
@@ -389,12 +416,13 @@ async function preCommitReview() {
 
 // For general improvement
 {
-  "severity": "low", 
+  "severity": "low",
   "maxIssues": 50
 }
 ```
 
 ### 3. Exclude irrelevant files
+
 ```typescript
 {
   "excludePatterns": [
@@ -406,6 +434,7 @@ async function preCommitReview() {
 ```
 
 ### 4. Use structured output for automation
+
 ```typescript
 {
   "outputFormat": "json",
@@ -418,22 +447,29 @@ async function preCommitReview() {
 Common errors and solutions:
 
 ### Target not found
+
 ```
 ❌ Target Error: Target @src/nonexistent/ not found
 ```
+
 **Solution**: Verify the target path exists and use correct @ syntax.
 
-### Directory access denied  
+### Directory access denied
+
 ```
 ❌ Directory Access Error: Permission denied accessing ./src
 ```
+
 **Solution**: Add directory access with `addDir: ["./src"]`.
 
 ### Review timeout
+
 ```
 ❌ Review Timeout: Large codebase review took longer than expected
 ```
+
 **Solutions**:
+
 - Increase timeout: `timeout: 900000` (15 minutes)
 - Reduce scope: Review smaller directories
 - Use exclusion patterns to skip large files
@@ -442,4 +478,4 @@ Common errors and solutions:
 
 - [`ask-copilot`](./ask-copilot) - General purpose Copilot CLI integration
 - [`batch-copilot`](./batch-copilot) - Batch processing with Copilot CLI
-- [`review-codex`](./review-codex) - Legacy Codex CLI code review
+- [`review`](./review) - Legacy GitHub Copilot CLI code review

@@ -44,7 +44,7 @@ const goBack = () => {
   if (window.history.length > 1) {
     window.history.back()
   } else {
-    router.go('/codex-mcp-tool/')
+    router.go('/copilot-mcp-tool/')
   }
 }
 

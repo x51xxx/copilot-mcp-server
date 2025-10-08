@@ -102,6 +102,7 @@ copilot --allow-tool 'GitHub-MCP' --deny-tool 'GitHub-MCP(delete_issue)' --deny-
 You can use a combination of approval options to determine exactly which tools Copilot can use without asking for your approval.
 
 ### Example 1: Selective shell command permissions
+
 To prevent Copilot from using the `rm` and `git push` commands, but automatically allow all other tools:
 
 ```bash
@@ -109,6 +110,7 @@ copilot --allow-all-tools --deny-tool 'shell(rm)' --deny-tool 'shell(git push)'
 ```
 
 ### Example 2: MCP server tool management
+
 To prevent Copilot from using the tool `tool_name` from the MCP server named `My-MCP-Server`, but allow all other tools from that server:
 
 ```bash
@@ -116,6 +118,7 @@ copilot --allow-tool 'My-MCP-Server' --deny-tool 'My-MCP-Server(tool_name)'
 ```
 
 ### Example 3: Comprehensive security configuration
+
 A security-focused configuration that allows safe operations while blocking dangerous ones:
 
 ```bash
@@ -181,6 +184,7 @@ When using GitHub Copilot CLI through the MCP server, you can specify tool permi
 ## Best practices for tool permissions
 
 ### 1. Principle of least privilege
+
 Start with minimal permissions and add only what's necessary:
 
 ```bash
@@ -192,6 +196,7 @@ copilot --allow-tool 'shell(git status)' --allow-tool 'shell(npm test)'
 ```
 
 ### 2. Use deny-tool for dangerous commands
+
 Always explicitly deny dangerous operations:
 
 ```bash
@@ -202,11 +207,13 @@ copilot --allow-all-tools \
 ```
 
 ### 3. Session-scoped vs persistent permissions
+
 - Use command-line options for session-scoped permissions
 - Be cautious with persistent configurations
 - Regularly review and update permission policies
 
 ### 4. Environment-specific configurations
+
 Different permission sets for different environments:
 
 ```bash
@@ -221,6 +228,7 @@ copilot --allow-tool 'shell(npm test)' --allow-tool 'shell(npm build)' --deny-to
 ```
 
 ### 5. Monitoring and auditing
+
 - Use logging to track tool usage
 - Regularly review permission grants
 - Implement alerting for dangerous command attempts

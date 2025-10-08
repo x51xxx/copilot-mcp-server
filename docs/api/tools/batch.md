@@ -1,33 +1,35 @@
-# batch-copilot
+# batch
 
 Delegate multiple atomic tasks to GitHub Copilot CLI for batch processing.
 
 ## Description
 
-The `batch-copilot` tool enables efficient batch processing of multiple tasks using GitHub Copilot CLI. It's ideal for repetitive operations, mass refactoring, automated code transformations, and processing multiple files or components in a systematic way.
+The `batch` tool enables efficient batch processing of multiple tasks using GitHub Copilot CLI. It's ideal for repetitive operations, mass refactoring, automated code transformations, and processing multiple files or components in a systematic way.
 
 ## Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `tasks` | Task[] | ✅ | - | Array of atomic tasks to delegate to GitHub Copilot |
-| `addDir` | string \| string[] | ❌ | - | Add directories to allowed list for file access |
-| `allowAllTools` | boolean | ❌ | `true` | Allow all tools to run automatically |
-| `allowTool` | string \| string[] | ❌ | - | Allow specific tools |
-| `denyTool` | string \| string[] | ❌ | - | Deny specific tools |
-| `logLevel` | enum | ❌ | - | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none` |
-| `parallel` | boolean | ❌ | `false` | Execute tasks in parallel (experimental) |
-| `stopOnError` | boolean | ❌ | `true` | Stop execution if any task fails |
-| `timeout` | number | ❌ | - | Maximum execution time per task in milliseconds |
-| `workingDir` | string | ❌ | - | Working directory for execution |
+| Parameter       | Type               | Required | Default | Description                                                                  |
+| --------------- | ------------------ | -------- | ------- | ---------------------------------------------------------------------------- |
+| `tasks`         | Task[]             | ✅       | -       | Array of atomic tasks to delegate to GitHub Copilot                          |
+| `model`         | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, or `claude-sonnet-4.5`                 |
+| `addDir`        | string \| string[] | ❌       | -       | Add directories to allowed list for file access                              |
+| `allowAllTools` | boolean            | ❌       | `true`  | Allow all tools to run automatically                                         |
+| `allowTool`     | string \| string[] | ❌       | -       | Allow specific tools (supports glob patterns)                                |
+| `denyTool`      | string \| string[] | ❌       | -       | Deny specific tools                                                          |
+| `logLevel`      | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none` |
+| `resume`        | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)               |
+| `continue`      | boolean            | ❌       | -       | Resume the most recent session                                               |
+| `parallel`      | boolean            | ❌       | `false` | Execute tasks in parallel (experimental)                                     |
+| `stopOnError`   | boolean            | ❌       | `true`  | Stop execution if any task fails                                             |
+| `timeout`       | number             | ❌       | -       | Maximum execution time per task in milliseconds                              |
 
 ### Task Object
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `task` | string | ✅ | - | Atomic task description |
-| `target` | string | ❌ | - | Target files/directories (use @ syntax) |
-| `priority` | enum | ❌ | `normal` | Task priority: `high`, `normal`, `low` |
+| Parameter  | Type   | Required | Default  | Description                             |
+| ---------- | ------ | -------- | -------- | --------------------------------------- |
+| `task`     | string | ✅       | -        | Atomic task description                 |
+| `target`   | string | ❌       | -        | Target files/directories (use @ syntax) |
+| `priority` | enum   | ❌       | `normal` | Task priority: `high`, `normal`, `low`  |
 
 ## Examples
 
@@ -68,7 +70,7 @@ The `batch-copilot` tool enables efficient batch processing of multiple tasks us
       "priority": "high"
     },
     {
-      "task": "Run tests for services module", 
+      "task": "Run tests for services module",
       "target": "@src/services/",
       "priority": "high"
     },
@@ -152,10 +154,11 @@ The `batch-copilot` tool enables efficient batch processing of multiple tasks us
 
 The tool returns a comprehensive execution report:
 
-```markdown
+````markdown
 # GitHub Copilot Batch Execution Report
 
 ## Summary
+
 - **Total Tasks:** 4
 - **Successful:** 3
 - **Failed:** 1
@@ -165,9 +168,11 @@ The tool returns a comprehensive execution report:
 ## Successful Tasks (3)
 
 ### Task 1: Add TypeScript types to user model
+
 **Duration:** 12000ms
 
 **Output:**
+
 ```typescript
 // Updated user model with proper TypeScript interfaces
 interface User {
@@ -177,11 +182,14 @@ interface User {
   createdAt: Date;
 }
 ```
+````
 
 ### Task 2: Update console.log statements
+
 **Duration:** 8000ms
 
 **Output:**
+
 ```javascript
 // Replaced console.log with proper logging
 import logger from './logger';
@@ -189,32 +197,37 @@ logger.info('User authenticated successfully');
 ```
 
 ### Task 3: Add input validation
+
 **Duration:** 15000ms
 
 **Output:**
+
 ```javascript
 // Added Joi validation schemas
 const userSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().email().required()
+  email: Joi.string().email().required(),
 });
 ```
 
 ## Failed Tasks (1)
 
 ### Task 4: Convert class component
+
 **Duration:** 10000ms
 **Error:** Target file not found: src/components/OldComponent.jsx
 
 ---
-*GitHub Copilot CLI Batch Processing completed at 2024-01-15T10:30:00.000Z*
-```
+
+_GitHub Copilot CLI Batch Processing completed at 2024-01-15T10:30:00.000Z_
+
+````
 
 ## Task execution order
 
 Tasks are executed in priority order:
 1. **High priority** tasks first
-2. **Normal priority** tasks second  
+2. **Normal priority** tasks second
 3. **Low priority** tasks last
 
 Within the same priority level, tasks are executed in the order they appear in the array.
@@ -240,9 +253,10 @@ Within the same priority level, tasks are executed in the order they appear in t
 {
   "stopOnError": true  // Stops batch execution on first error
 }
-```
+````
 
 ### Continue on error
+
 ```typescript
 {
   "stopOnError": false  // Continues processing remaining tasks even when tasks fail
@@ -252,6 +266,7 @@ Within the same priority level, tasks are executed in the order they appear in t
 ## Performance considerations
 
 ### Task timeouts
+
 ```typescript
 {
   "timeout": 300000,  // 5 minutes per task
@@ -260,11 +275,13 @@ Within the same priority level, tasks are executed in the order they appear in t
 ```
 
 ### Rate limiting
+
 - Sequential execution includes built-in delays
 - Parallel execution may hit rate limits faster
 - Monitor for 429 responses and adjust accordingly
 
 ### Resource usage
+
 - Each task spawns a separate Copilot CLI process
 - Memory usage scales with parallel task count
 - Consider system resources when setting parallel task limits
@@ -272,6 +289,7 @@ Within the same priority level, tasks are executed in the order they appear in t
 ## Best practices
 
 ### 1. Task granularity
+
 ```typescript
 // Good: Atomic, specific tasks
 {
@@ -279,13 +297,14 @@ Within the same priority level, tasks are executed in the order they appear in t
   "target": "@src/services/userService.js"
 }
 
-// Avoid: Vague, overly broad tasks  
+// Avoid: Vague, overly broad tasks
 {
   "task": "Fix everything in the codebase"
 }
 ```
 
 ### 2. Target specification
+
 ```typescript
 // Good: Specific file targets
 {
@@ -301,6 +320,7 @@ Within the same priority level, tasks are executed in the order they appear in t
 ```
 
 ### 3. Priority assignment
+
 ```typescript
 {
   "tasks": [
@@ -309,7 +329,7 @@ Within the same priority level, tasks are executed in the order they appear in t
       "priority": "high"        // Will run first
     },
     {
-      "task": "Code cleanup", 
+      "task": "Code cleanup",
       "priority": "low"         // Will run last
     }
   ]
@@ -317,6 +337,7 @@ Within the same priority level, tasks are executed in the order they appear in t
 ```
 
 ### 4. Error resilience
+
 ```typescript
 {
   "stopOnError": false,        // Continue on errors
@@ -328,21 +349,25 @@ Within the same priority level, tasks are executed in the order they appear in t
 ## Common use cases
 
 ### Code modernization
+
 - Convert legacy syntax to modern standards
 - Update deprecated APIs
 - Migrate between frameworks or libraries
 
 ### Quality improvement
+
 - Add error handling across multiple files
 - Implement consistent coding standards
 - Add documentation or comments
 
 ### Testing and validation
+
 - Run tests across multiple modules
 - Validate configuration files
 - Check code compliance
 
 ### Build and deployment
+
 - Update build configurations
 - Generate documentation
 - Prepare release artifacts
@@ -358,4 +383,4 @@ Within the same priority level, tasks are executed in the order they appear in t
 
 - [`ask-copilot`](./ask-copilot) - Single task execution with Copilot CLI
 - [`review-copilot`](./review-copilot) - Comprehensive code review
-- [`batch-codex`](./batch-codex) - Legacy Codex CLI batch processing
+- [`batch`](./batch) - Legacy GitHub Copilot CLI batch processing

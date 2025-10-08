@@ -1,10 +1,10 @@
 # help Tool
 
-Display Codex CLI help information and available commands.
+Display GitHub Copilot CLI help information and available commands.
 
 ## Overview
 
-The `help` tool provides access to Codex CLI's built-in help system, showing available commands, options, and usage information.
+The `help` tool provides access to GitHub Copilot CLI's built-in help system, showing available commands, options, and usage information.
 
 ## Syntax
 
@@ -30,7 +30,8 @@ This tool accepts no parameters.
 }
 ```
 
-Returns comprehensive Codex CLI help including:
+Returns comprehensive GitHub Copilot CLI help including:
+
 - Available commands
 - Global options
 - Model information
@@ -39,7 +40,7 @@ Returns comprehensive Codex CLI help including:
 ## Output Format
 
 ```
-Codex CLI - AI-powered code assistant
+GitHub Copilot CLI - AI-powered code assistant
 
 USAGE:
   codex [OPTIONS] <COMMAND>
@@ -60,16 +61,16 @@ GLOBAL OPTIONS:
   ...
 
 EXAMPLES:
-  codex exec "explain this code"
-  codex exec "refactor @file.ts"
-  codex --model gpt-5 exec "complex task"
+  copilot -p "explain this code"
+  copilot -p "refactor @file.ts"
+  copilot --model gpt-5 -p "complex task"
 ```
 
 ## Use Cases
 
 ### Learning Available Options
 
-Discover what Codex CLI can do:
+Discover what GitHub Copilot CLI can do:
 
 ```javascript
 // Get full help
@@ -77,7 +78,7 @@ Discover what Codex CLI can do:
 
 // Then use specific features
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "use the feature I just learned about",
     "model": "gpt-5"
@@ -90,14 +91,16 @@ Discover what Codex CLI can do:
 When unsure about syntax:
 
 1. Check help first:
+
 ```javascript
 { "name": "help", "arguments": {} }
 ```
 
 2. Use correct syntax:
+
 ```javascript
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "task",
     "sandboxMode": "workspace-write"  // Correct parameter from help
@@ -108,9 +111,10 @@ When unsure about syntax:
 ### Discovering Models
 
 Help output includes available models:
-- GPT-5 (400K context)
-- o3 (200K context)
-- o4-mini (200K context, fast)
+
+- gpt-5 (OpenAI's latest model)
+- claude-sonnet-4 (Anthropic's balanced model)
+- claude-sonnet-4.5 (Anthropic's advanced model)
 
 ## Integration with Other Tools
 
@@ -125,10 +129,10 @@ Help output includes available models:
 
 // 3. Execute task with learned options
 {
-  "name": "ask-codex",
+  "name": "ask",
   "arguments": {
     "prompt": "analyze @src/",
-    "model": "o4-mini",
+    "model": "claude-sonnet-4",
     "sandboxMode": "read-only"
   }
 }
@@ -137,17 +141,20 @@ Help output includes available models:
 ## Common Information from Help
 
 ### Sandbox Modes
+
 - `read-only` - Only read files
 - `workspace-write` - Read and write in workspace
 - `danger-full-access` - Full system access
 
 ### Approval Policies
+
 - `never` - No approvals needed
 - `on-request` - Approve each action
 - `on-failure` - Approve on errors
 - `untrusted` - Always require approval
 
 ### File Reference Syntax
+
 - `@file.ts` - Include single file
 - `@dir/` - Include directory
 - `@**/*.ts` - Glob pattern
@@ -164,6 +171,7 @@ Help output includes available models:
 ### Interpreting Help Output
 
 Focus on:
+
 - **COMMANDS** section for available operations
 - **OPTIONS** section for parameters
 - **EXAMPLES** section for usage patterns
@@ -177,19 +185,19 @@ Focus on:
 { "name": "ping", "arguments": {} }  // Test basic connectivity
 
 // If ping works but help doesn't:
-// - Codex CLI may not be installed
-// - Run: codex --version in terminal
+// - GitHub Copilot CLI may not be installed
+// - Run: copilot --version in terminal
 ```
 
 ## Related Tools
 
 - [ping](./ping.md) - Test connectivity
-- [ask-codex](./ask-codex.md) - Execute commands
+- [ask](./ask.md) - Execute commands
 - [brainstorm](./brainstorm.md) - Generate ideas
 
 ## See Also
 
 - [Getting Started](../../getting-started.md)
-- [Codex CLI Basics](../../codex-cli-getting-started.md)
+- [GitHub Copilot CLI Basics](../../copilot-cli/overview.md)
 - [Configuration](../../config.md)
 - [FAQ](../../resources/faq.md)

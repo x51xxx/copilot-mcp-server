@@ -10,7 +10,6 @@
 
 </div>
 
-
 **Copilot MCP Tool** is an open‑source Model Context Protocol (MCP) server that connects your IDE or AI assistant (Claude, Cursor, etc.) to **GitHub Copilot CLI**. It enables non‑interactive automation, safe tool execution with permissions, and large‑scale code analysis via `@` file references. Built for reliability and speed, it streams progress updates, and integrates cleanly with standard MCP clients for code review, refactoring, documentation, and CI automation.
 
 - **Primary**: Ask GitHub Copilot CLI questions from your MCP client, with comprehensive tool management
@@ -48,6 +47,7 @@ Type `/mcp` inside Claude Code to verify the Copilot MCP is active.
 If you already have it configured in Claude Desktop:
 
 1. Add to your Claude Desktop config:
+
 ```json
 "copilot-cli": {
   "command": "npx",
@@ -56,6 +56,7 @@ If you already have it configured in Claude Desktop:
 ```
 
 2. Import to Claude Code:
+
 ```bash
 claude mcp add-from-claude-desktop
 ```
@@ -113,16 +114,16 @@ After updating the configuration, restart your terminal session.
 
 ```javascript
 // Use GitHub Copilot CLI for analysis
-"explain the architecture of @src/"
+'explain the architecture of @src/';
 
 // Code review with specific focus
-"use copilot to review @src/main.ts for security vulnerabilities"
+'use copilot to review @src/main.ts for security vulnerabilities';
 
 // Batch processing multiple files
-"use batch to refactor all JavaScript files in @src/ for ES6 syntax"
+'use batch to refactor all JavaScript files in @src/ for ES6 syntax';
 
 // Comprehensive code review
-"use review to perform security review of @api/ with high severity filter"
+'use review to perform security review of @api/ with high severity filter';
 ```
 
 ### With File References (using @ syntax)
@@ -141,13 +142,13 @@ After updating the configuration, restart your terminal session.
 
 ```javascript
 // GitHub Copilot CLI batch processing
-"use batch to update all React components in @src/components/ for React 18 patterns"
+'use batch to update all React components in @src/components/ for React 18 patterns';
 
 // Comprehensive code review
-"use review for security review of @api/ with critical severity filter and fix suggestions"
+'use review for security review of @api/ with critical severity filter and fix suggestions';
 
 // Multiple task processing
-"use batch to: 1) add JSDoc comments to @utils.js, 2) fix ESLint issues in @main.ts, 3) update imports in @index.js"
+'use batch to: 1) add JSDoc comments to @utils.js, 2) fix ESLint issues in @main.ts, 3) update imports in @index.js';
 ```
 
 ### Brainstorming & Ideation

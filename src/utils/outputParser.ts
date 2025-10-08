@@ -38,7 +38,8 @@ export interface CopilotOutput {
   rawOutput: string;
 }
 
-export function parseLegacyOutput(rawOutput: string): LegacyOutput { // Legacy parser for backward compatibility
+export function parseLegacyOutput(rawOutput: string): LegacyOutput {
+  // Legacy parser for backward compatibility
   const lines = rawOutput.split('\n');
   const timestamps: string[] = [];
   let metadata: any = {};
@@ -109,7 +110,12 @@ export function parseLegacyOutput(rawOutput: string): LegacyOutput { // Legacy p
         break;
       case 'response':
       case 'content':
-        if (line.trim() && !line.includes('assistant') && !line.includes('copilot') && !line.includes('tokens used:')) {
+        if (
+          line.trim() &&
+          !line.includes('assistant') &&
+          !line.includes('copilot') &&
+          !line.includes('tokens used:')
+        ) {
           responseLines.push(line);
         }
         break;
@@ -129,7 +135,7 @@ export function parseLegacyOutput(rawOutput: string): LegacyOutput { // Legacy p
     response,
     tokensUsed,
     timestamps,
-    rawOutput
+    rawOutput,
   };
 
   Logger.copilotResponse(response, tokensUsed);
@@ -151,7 +157,12 @@ function parseMetadata(metadataLines: string[]): any {
   return metadata;
 }
 
-export function formatLegacyResponse(output: LegacyOutput, includeThinking: boolean = true, includeMetadata: boolean = true): string { // Legacy formatter for backward compatibility
+export function formatLegacyResponse(
+  output: LegacyOutput,
+  includeThinking: boolean = true,
+  includeMetadata: boolean = true
+): string {
+  // Legacy formatter for backward compatibility
   let formatted = '';
 
   // Add metadata summary if requested
@@ -183,7 +194,12 @@ export function formatLegacyResponse(output: LegacyOutput, includeThinking: bool
   return formatted;
 }
 
-export function formatLegacyResponseForMCP(result: string, includeThinking: boolean = true, includeMetadata: boolean = true): string { // Legacy MCP formatter
+export function formatLegacyResponseForMCP(
+  result: string,
+  includeThinking: boolean = true,
+  includeMetadata: boolean = true
+): string {
+  // Legacy MCP formatter
   // Try to parse the output first
   try {
     const parsed = parseLegacyOutput(result); // Legacy parsing
@@ -215,12 +231,11 @@ export function isErrorResponse(output: CopilotOutput | LegacyOutput | string): 
     'authentication',
     'permission denied',
     'rate limit',
-    'quota exceeded'
+    'quota exceeded',
   ];
 
-  const responseText = typeof output === 'string'
-    ? output.toLowerCase()
-    : output.response.toLowerCase();
+  const responseText =
+    typeof output === 'string' ? output.toLowerCase() : output.response.toLowerCase();
 
   return errorKeywords.some(keyword => responseText.includes(keyword));
 }
@@ -251,7 +266,11 @@ export function parseCopilotOutput(rawOutput: string): CopilotOutput {
     if (line.includes('GitHub Copilot') || line.includes('Copilot CLI')) {
       currentSection = 'header';
       continue;
-    } else if (line.includes('Thinking:') || line.includes('Reasoning:') || line.includes('Planning:')) {
+    } else if (
+      line.includes('Thinking:') ||
+      line.includes('Reasoning:') ||
+      line.includes('Planning:')
+    ) {
       currentSection = 'thinking';
       continue;
     } else if (line.includes('Response:') || line.includes('Answer:') || line.includes('Result:')) {
@@ -262,22 +281,34 @@ export function parseCopilotOutput(rawOutput: string): CopilotOutput {
     // Parse based on current section
     switch (currentSection) {
       case 'thinking':
-        if (line.trim() && !line.includes('Thinking:') && !line.includes('Reasoning:') && !line.includes('Planning:')) {
+        if (
+          line.trim() &&
+          !line.includes('Thinking:') &&
+          !line.includes('Reasoning:') &&
+          !line.includes('Planning:')
+        ) {
           thinkingLines.push(line);
         }
         break;
       case 'response':
-        if (line.trim() && !line.includes('Response:') && !line.includes('Answer:') && !line.includes('Result:')) {
+        if (
+          line.trim() &&
+          !line.includes('Response:') &&
+          !line.includes('Answer:') &&
+          !line.includes('Result:')
+        ) {
           responseLines.push(line);
         }
         break;
       default:
         // Try to capture everything as response if no clear sections found
-        if (line.trim() && 
-            !line.includes('GitHub Copilot') && 
-            !line.includes('Copilot CLI') &&
-            !line.includes('Executing tool:') &&
-            !line.includes('Running:')) {
+        if (
+          line.trim() &&
+          !line.includes('GitHub Copilot') &&
+          !line.includes('Copilot CLI') &&
+          !line.includes('Executing tool:') &&
+          !line.includes('Running:')
+        ) {
           responseLines.push(line);
         }
         break;
@@ -294,21 +325,26 @@ export function parseCopilotOutput(rawOutput: string): CopilotOutput {
     thinking: thinking || undefined,
     response,
     toolExecutions,
-    rawOutput
+    rawOutput,
   };
 
   Logger.debug('Parsed Copilot output:', { thinking: !!thinking, responseLength: response.length });
   return output;
 }
 
-export function formatCopilotResponse(output: CopilotOutput, includeThinking: boolean = true, includeMetadata: boolean = true): string {
+export function formatCopilotResponse(
+  output: CopilotOutput,
+  includeThinking: boolean = true,
+  includeMetadata: boolean = true
+): string {
   let formatted = '';
 
   // Add metadata summary if requested
   if (includeMetadata && (output.toolExecutions?.length || output.metadata.sessionId)) {
     formatted += `**GitHub Copilot Session:**\n`;
     if (output.metadata.sessionId) formatted += `- Session: ${output.metadata.sessionId}\n`;
-    if (output.toolExecutions?.length) formatted += `- Tools Used: ${output.toolExecutions.length} executions\n`;
+    if (output.toolExecutions?.length)
+      formatted += `- Tools Used: ${output.toolExecutions.length} executions\n`;
     formatted += '\n';
   }
 
@@ -336,7 +372,11 @@ export function formatCopilotResponse(output: CopilotOutput, includeThinking: bo
   return formatted;
 }
 
-export function formatCopilotResponseForMCP(result: string, includeThinking: boolean = true, includeMetadata: boolean = true): string {
+export function formatCopilotResponseForMCP(
+  result: string,
+  includeThinking: boolean = true,
+  includeMetadata: boolean = true
+): string {
   // Try to parse the output first
   try {
     const parsed = parseCopilotOutput(result);
@@ -347,8 +387,4 @@ export function formatCopilotResponseForMCP(result: string, includeThinking: boo
   }
 }
 
-// Export aliases for backward compatibility
-export type CodexOutput = LegacyOutput;
-export const parseCodexOutput = parseLegacyOutput;
-export const formatCodexResponse = formatLegacyResponse;
-export const formatCodexResponseForMCP = formatLegacyResponseForMCP;
+// Note: Legacy functions are kept for potential future use with other CLI tools
