@@ -12,19 +12,16 @@ The `brainstorm` tool leverages AI models to generate creative solutions using v
 {
   "name": "brainstorm",
   "arguments": {
-    "prompt": "string",           // Required
-    "model": "string",            // Optional
-    "methodology": "string",      // Optional
-    "domain": "string",          // Optional
-    "constraints": "string",     // Optional
-    "existingContext": "string", // Optional
-    "ideaCount": "number",       // Optional
-    "includeAnalysis": "boolean", // Optional
-    "approvalPolicy": "string",  // Optional
-    "sandboxMode": "string",     // Optional
-    "fullAuto": "boolean",       // Optional
-    "cd": "string",             // Optional
-    "yolo": "boolean"           // Optional
+    "prompt": "string",            // Required
+    "model": "string",             // Optional
+    "addDir": "string|string[]",   // Optional
+    "methodology": "string",       // Optional
+    "domain": "string",            // Optional
+    "constraints": "string",       // Optional
+    "existingContext": "string",   // Optional
+    "ideaCount": "number",         // Optional
+    "includeAnalysis": "boolean",  // Optional
+    "workingDir": "string"         // Optional
   }
 }
 ```
@@ -36,15 +33,15 @@ The `brainstorm` tool leverages AI models to generate creative solutions using v
 #### prompt (required)
 
 - **Type:** `string`
-- **Description:** The brainstorming challenge or question to explore
+- **Description:** Brainstorming challenge or question
 - **Example:** `"ways to improve API performance"`
 
 #### model (optional)
 
 - **Type:** `string`
-- **Default:** Codex default model
-- **Options:** `"gpt-5"`, `"claude-sonnet-4"`, `"claude-sonnet-4.5"`
-- **Recommendation:** Use GPT-5 for creative tasks
+- **Default:** Defaults to COPILOT_MODEL env var
+- **Options:** `"gpt-5"`, `"claude-sonnet-4"`, `"claude-sonnet-4.5"`, `"claude-haiku-4.5"` (0.33x cost)
+- **Recommendation:** Use GPT-5 for expansive creativity; Haiku for budget runs
 
 #### methodology (optional)
 
@@ -63,19 +60,19 @@ The `brainstorm` tool leverages AI models to generate creative solutions using v
 #### domain (optional)
 
 - **Type:** `string`
-- **Description:** Domain context for specialized brainstorming
+- **Description:** Domain: software, business, creative, research, product, marketing, etc.
 - **Examples:** `"software"`, `"business"`, `"creative"`, `"research"`, `"product"`, `"marketing"`
 
 #### constraints (optional)
 
 - **Type:** `string`
-- **Description:** Known limitations, requirements, or boundaries
+- **Description:** Limitations: budget, time, technical, legal, etc.
 - **Example:** `"budget under $10k, must work with existing infrastructure"`
 
 #### existingContext (optional)
 
 - **Type:** `string`
-- **Description:** Background information or previous attempts
+- **Description:** Background info or previous attempts
 - **Example:** `"We tried caching but it didn't help enough"`
 
 ### Output Parameters
@@ -84,45 +81,26 @@ The `brainstorm` tool leverages AI models to generate creative solutions using v
 
 - **Type:** `number`
 - **Default:** `12`
-- **Range:** 1-50
-- **Description:** Target number of ideas to generate
+- **Range:** 5-30
+- **Description:** Number of ideas (default: 12, range: 5-30)
 
 #### includeAnalysis (optional)
 
 - **Type:** `boolean`
 - **Default:** `true`
-- **Description:** Include feasibility, impact, and implementation analysis
+- **Description:** Include feasibility/impact analysis
 
 ### Execution Parameters
 
-#### approvalPolicy (optional)
+#### addDir (optional)
+
+- **Type:** `string | string[]`
+- **Description:** Add directories to allowed list for file access
+
+#### workingDir (optional)
 
 - **Type:** `string`
-- **Options:** `"never"`, `"on-request"`, `"on-failure"`, `"untrusted"`
-- **Description:** When approval is required
-
-#### sandboxMode (optional)
-
-- **Type:** `string`
-- **Options:** `"read-only"`, `"workspace-write"`, `"danger-full-access"`
-- **Description:** File system access level
-
-#### fullAuto (optional)
-
-- **Type:** `boolean`
-- **Default:** `false`
-- **Description:** Enable full automation
-
-#### cd (optional)
-
-- **Type:** `string`
-- **Description:** Working directory
-
-#### yolo (optional)
-
-- **Type:** `boolean`
-- **Default:** `false`
-- **Description:** Bypass all safety measures
+- **Description:** Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()
 
 ## Methodologies Explained
 
@@ -343,10 +321,13 @@ Creates unexpected connections:
 
 ```javascript
 {
-  "prompt": "cross-functional solutions for slow deployments",
-  "domain": "software,business,operations",
-  "methodology": "lateral",
-  "ideaCount": 15
+  "name": "brainstorm",
+  "arguments": {
+    "prompt": "cross-functional solutions for slow deployments",
+    "domain": "software,business,operations",
+    "methodology": "lateral",
+    "ideaCount": 15
+  }
 }
 ```
 
