@@ -46,7 +46,7 @@ npm install -g @trishchuk/copilot-mcp-server
 
 ```bash
 # Check if the command is available
-which copilot-mcp-server
+which copilot-mcp
 
 # The server communicates via stdio, so running it directly won't be very useful
 # It needs to be configured with an MCP client
@@ -164,9 +164,10 @@ Choose which AI model to use:
 
 Available models:
 
-- `gpt-5` (default)
-- `claude-sonnet-4`
-- `claude-sonnet-4.5`
+- `gpt-5` (1x)
+- `claude-sonnet-4` (1x)
+- `claude-sonnet-4.5` (1x, default)
+- `claude-haiku-4.5` (0.33x, fastest/cheapest)
 
 ## Troubleshooting
 
@@ -209,6 +210,27 @@ If you see "Tool denied" errors:
 - [Security Considerations](/copilot-cli/security)
 - [Tool Permissions Guide](/copilot-cli/tool-permissions)
 
+## ⚠️ Important: MCP Environment Variables (Copilot CLI v0.0.340+)
+
+If you're configuring MCP servers in `~/.copilot/mcp-config.json`, ensure you use `${VARIABLE_NAME}` syntax for environment variable references:
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": {
+        "API_KEY": "${MY_API_KEY}" // ✅ Correct
+        // "API_KEY": "MY_API_KEY"  // ❌ Wrong - will be treated as literal string
+      }
+    }
+  }
+}
+```
+
+**Breaking Change**: Starting with Copilot CLI v0.0.340, environment variables must use `${VAR}` syntax. Without the `${}` wrapper, values are treated as literal strings.
+
 ## Environment Variables
 
 You can configure default behavior using environment variables:
@@ -219,9 +241,10 @@ You can configure default behavior using environment variables:
 
 **Available models**:
 
-- `claude-sonnet-4.5` - Anthropic Claude Sonnet 4.5 (default, best for code generation)
-- `claude-sonnet-4` - Anthropic Claude Sonnet 4 (faster version)
-- `gpt-5` - OpenAI GPT-5
+- `claude-sonnet-4.5` (1x) - Anthropic Claude Sonnet 4.5 (default, best for code generation)
+- `claude-sonnet-4` (1x) - Anthropic Claude Sonnet 4 (balanced performance)
+- `claude-haiku-4.5` (0.33x) - Anthropic Claude Haiku 4.5 (fastest, most economical)
+- `gpt-5` (1x) - OpenAI GPT-5
 
 **Configuration**:
 

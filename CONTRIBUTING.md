@@ -85,7 +85,7 @@ Add to your configuration:
   "mcpServers": {
     "copilot-dev": {
       "command": "node",
-      "args": ["/path/to/your/copilot-mcp-server/dist/index.js"]
+      "args": ["/path/to/your/copilot-mcp-tool/dist/index.js"]
     }
   }
 }
