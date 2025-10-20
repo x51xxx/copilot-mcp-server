@@ -49,6 +49,12 @@ const reviewArgsSchema = z.object({
     .optional()
     .describe('Resume from a previous session (optionally specify session ID)'),
   continue: z.boolean().optional().describe('Resume the most recent session'),
+  workingDir: z
+    .string()
+    .optional()
+    .describe(
+      'Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()'
+    ),
 });
 
 export const reviewTool: UnifiedTool = {
@@ -76,6 +82,7 @@ export const reviewTool: UnifiedTool = {
       allowAllTools,
       resume,
       continue: continueSession,
+      workingDir,
     } = args;
 
     if (!target || typeof target !== 'string' || !target.trim()) {
@@ -167,6 +174,7 @@ export const reviewTool: UnifiedTool = {
           resume: resume as string | boolean,
           continue: continueSession as boolean,
           timeoutMs: (timeout as number) || 300000, // 5 minutes default for reviews
+          workingDir: workingDir as string,
         },
         progress => onProgress?.(`🔍 ${progress.slice(0, 100)}...`)
       );

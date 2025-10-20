@@ -144,6 +144,7 @@ echo 'export COPILOT_MODEL=claude-sonnet-4.5' >> ~/.zshrc
 ```
 
 **Available models**:
+
 - `claude-sonnet-4.5` - Default, best for code generation
 - `claude-sonnet-4` - Faster version
 - `gpt-5` - OpenAI GPT-5
@@ -151,6 +152,7 @@ echo 'export COPILOT_MODEL=claude-sonnet-4.5' >> ~/.zshrc
 **Priority**: `model` parameter > `COPILOT_MODEL` env > Copilot CLI default (`claude-sonnet-4.5`)
 
 **Override in requests**:
+
 ```
 # Uses COPILOT_MODEL
 Use ask tool to analyze @src/
@@ -158,6 +160,53 @@ Use ask tool to analyze @src/
 # Overrides with gpt-5
 Use ask tool with model gpt-5 to analyze @src/
 ```
+
+#### `COPILOT_MCP_CWD` - Working Directory
+
+**Purpose**: Sets the working directory for Copilot CLI command execution. This is especially important when the MCP server starts from a different directory than your project (e.g., from home directory in IDE integrations).
+
+**Method 1: In MCP Configuration (Recommended for IDE)**
+
+```json
+{
+  "mcpServers": {
+    "copilot-cli": {
+      "command": "npx",
+      "args": ["-y", "@trishchuk/copilot-mcp-server"],
+      "env": {
+        "COPILOT_MCP_CWD": "/absolute/path/to/your/project"
+      }
+    }
+  }
+}
+```
+
+**Method 2: System Environment Variable**
+
+```bash
+# Set for current session
+export COPILOT_MCP_CWD=/path/to/your/project
+
+# Permanently (add to ~/.bashrc or ~/.zshrc)
+echo 'export COPILOT_MCP_CWD=/path/to/your/project' >> ~/.zshrc
+```
+
+**Resolution Priority**:
+
+1. `workingDir` parameter in request (highest)
+2. `COPILOT_MCP_CWD` env variable
+3. `PWD` or `INIT_CWD` env variables
+4. Auto-inferred from `@path` in prompt
+5. `process.cwd()` (lowest)
+
+**Override in requests**:
+
+```
+# Use explicit workingDir parameter
+Use ask tool with workingDir "/path/to/project" to analyze the codebase
+```
+
+**For IntelliJ IDEA / IDE Users**: If Copilot CLI cannot find your project files, set `COPILOT_MCP_CWD` in your MCP server configuration to point to your project directory.
 
 See [Getting Started Guide](https://x51xxx.github.io/copilot-mcp-tool/getting-started#environment-variables) for full configuration details.
 

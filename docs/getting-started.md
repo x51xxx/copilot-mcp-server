@@ -73,7 +73,7 @@ Add the following to your Claude Desktop configuration file:
 }
 ```
 
-**З налаштуванням моделі за замовчуванням**:
+**With default model configuration**:
 
 ```json
 {
@@ -163,6 +163,7 @@ Choose which AI model to use:
 ```
 
 Available models:
+
 - `gpt-5` (default)
 - `claude-sonnet-4`
 - `claude-sonnet-4.5`
@@ -214,18 +215,19 @@ You can configure default behavior using environment variables:
 
 ### `COPILOT_MODEL`
 
-**Призначення**: Встановлює модель AI за замовчуванням для всіх запитів до GitHub Copilot CLI.
+**Purpose**: Sets the default AI model for all requests to GitHub Copilot CLI.
 
-**Доступні моделі**:
-- `claude-sonnet-4.5` - Anthropic Claude Sonnet 4.5 (за замовчуванням, найкраща для генерації коду)
-- `claude-sonnet-4` - Anthropic Claude Sonnet 4 (швидша версія)
+**Available models**:
+
+- `claude-sonnet-4.5` - Anthropic Claude Sonnet 4.5 (default, best for code generation)
+- `claude-sonnet-4` - Anthropic Claude Sonnet 4 (faster version)
 - `gpt-5` - OpenAI GPT-5
 
-**Встановлення**:
+**Configuration**:
 
-**Спосіб 1: В конфігурації MCP (Рекомендується)**
+**Method 1: In MCP Configuration (Recommended)**
 
-Додайте `env` поле в конфігурацію MCP сервера:
+Add the `env` field to your MCP server configuration:
 
 ```json
 {
@@ -241,61 +243,62 @@ You can configure default behavior using environment variables:
 }
 ```
 
-**Спосіб 2: Системна змінна середовища**
+**Method 2: System Environment Variable**
 
 ```bash
-# Для поточної сесії
+# For current session
 export COPILOT_MODEL=claude-sonnet-4.5
 
-# Постійно (додайте в ~/.bashrc або ~/.zshrc)
+# Permanently (add to ~/.bashrc or ~/.zshrc)
 echo 'export COPILOT_MODEL=claude-sonnet-4.5' >> ~/.zshrc
 source ~/.zshrc
 
-# Для Windows (PowerShell)
+# For Windows (PowerShell)
 $env:COPILOT_MODEL = "claude-sonnet-4.5"
 
-# Для Windows (постійно)
+# For Windows (permanently)
 setx COPILOT_MODEL "claude-sonnet-4.5"
 ```
 
-**Пріоритет вибору моделі**:
-1. **Параметр `model`** в запиті (найвищий пріоритет)
-2. **Змінна `COPILOT_MODEL`** (середній пріоритет)
-3. **Copilot CLI за замовчуванням** (найнижчий пріоритет, зазвичай `gpt-5`)
+**Model Selection Priority**:
 
-**Приклад використання**:
+1. **`model` parameter** in request (highest priority)
+2. **`COPILOT_MODEL` variable** (medium priority)
+3. **Copilot CLI default** (lowest priority, usually `gpt-5`)
+
+**Usage Example**:
 
 ```bash
-# Встановіть модель за замовчуванням
+# Set default model
 export COPILOT_MODEL=claude-sonnet-4.5
 
-# Запити використовуватимуть claude-sonnet-4.5
-# крім випадків, коли явно вказана інша модель
+# Requests will use claude-sonnet-4.5
+# except when another model is explicitly specified
 ```
 
-**Перевизначення в запитах**:
+**Overriding in Requests**:
 
 ```
-# Використає COPILOT_MODEL (claude-sonnet-4.5)
+# Will use COPILOT_MODEL (claude-sonnet-4.5)
 Use the ask tool to analyze @src/main.ts
 
-# Використає gpt-5 (перевизначення)
+# Will use gpt-5 (override)
 Use the ask tool with model gpt-5 to analyze @src/main.ts
 ```
 
 ### `LOG_LEVEL`
 
-**Призначення**: Встановлює рівень логування для сервера.
+**Purpose**: Sets the logging level for the server.
 
-**Доступні значення**: `error`, `warning`, `info`, `debug`
+**Available values**: `error`, `warning`, `info`, `debug`
 
 ```bash
 export LOG_LEVEL=info
 ```
 
-### Приклад `.env` файлу
+### Example `.env` file
 
-Створіть файл `.env` в корені проекту:
+Create a `.env` file in the project root:
 
 ```bash
 # AI Model Configuration
@@ -304,18 +307,18 @@ COPILOT_MODEL=claude-sonnet-4.5
 # Logging
 LOG_LEVEL=info
 
-# Proxy (опційно)
+# Proxy (optional)
 HTTPS_PROXY=http://proxy.company.com:8080
 HTTP_PROXY=http://proxy.company.com:8080
 ```
 
-**Завантаження .env файлу**:
+**Loading .env file**:
 
 ```bash
-# Використовуйте dotenv для завантаження
+# Use dotenv to load
 npm install -g dotenv-cli
 
-# Запустіть з .env
+# Run with .env
 dotenv npx @trishchuk/copilot-mcp-server
 ```
 

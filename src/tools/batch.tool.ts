@@ -46,6 +46,12 @@ const batchArgsSchema = z.object({
   parallel: z.boolean().default(false).describe('Execute tasks in parallel (experimental)'),
   stopOnError: z.boolean().default(true).describe('Stop execution if any task fails'),
   timeout: z.number().optional().describe('Maximum execution time per task in milliseconds'),
+  workingDir: z
+    .string()
+    .optional()
+    .describe(
+      'Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()'
+    ),
 });
 
 export const batchTool: UnifiedTool = {
@@ -71,6 +77,7 @@ export const batchTool: UnifiedTool = {
       parallel,
       stopOnError,
       timeout,
+      workingDir,
     } = args;
     const taskList = tasks as Array<{ task: string; target?: string; priority: string }>;
 
@@ -121,6 +128,7 @@ export const batchTool: UnifiedTool = {
             resume: resume as string | boolean,
             continue: continueSession as boolean,
             timeoutMs: (timeout as number) || 120000, // 2 minutes default per task
+            workingDir: workingDir as string,
           },
           progress => onProgress?.(`  └─ ${progress.slice(0, 100)}...`)
         );

@@ -133,6 +133,12 @@ const brainstormArgsSchema = z.object({
     .default(12)
     .describe('Number of ideas (default: 12, range: 5-30)'),
   includeAnalysis: z.boolean().default(true).describe('Include feasibility/impact analysis'),
+  workingDir: z
+    .string()
+    .optional()
+    .describe(
+      'Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()'
+    ),
 });
 
 export const brainstormTool: UnifiedTool = {
@@ -155,6 +161,7 @@ export const brainstormTool: UnifiedTool = {
       existingContext,
       ideaCount = 12,
       includeAnalysis = true,
+      workingDir,
     } = args;
 
     if (!prompt?.trim()) {
@@ -185,6 +192,7 @@ export const brainstormTool: UnifiedTool = {
         model: model as string,
         addDir: addDir as string | string[],
         allowAllTools: true,
+        workingDir: workingDir as string,
       },
       onProgress
     );

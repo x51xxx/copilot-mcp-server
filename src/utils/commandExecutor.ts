@@ -22,6 +22,7 @@ export interface ExecuteOptions {
   timeoutMs?: number;
   maxOutputBytes?: number;
   retry?: RetryOptions;
+  cwd?: string; // Working directory for command execution
 }
 
 /**
@@ -44,7 +45,12 @@ export async function executeCommandDetailed(
 
   while (attempt < maxAttempts) {
     attempt++;
-    const result = await executeOnce(command, args, { onProgress, timeoutMs, maxOutputBytes });
+    const result = await executeOnce(command, args, {
+      onProgress,
+      timeoutMs,
+      maxOutputBytes,
+      cwd: options.cwd,
+    });
 
     if (result.ok) {
       return result;
@@ -73,14 +79,23 @@ export async function executeCommandDetailed(
 async function executeOnce(
   command: string,
   args: string[],
-  { onProgress, timeoutMs, maxOutputBytes }: Omit<ExecuteOptions, 'retry'>
+  { onProgress, timeoutMs, maxOutputBytes, cwd }: Omit<ExecuteOptions, 'retry'>
 ): Promise<CommandResult> {
   return new Promise(resolve => {
     const startTime = Date.now();
     Logger.commandExecution(command, args, startTime);
 
+    // Prepare environment with updated PWD if cwd is provided
+    const env = cwd
+      ? {
+          ...process.env,
+          PWD: cwd,
+        }
+      : process.env;
+
     const childProcess = spawn(command, args, {
-      env: process.env,
+      env,
+      cwd, // Set working directory
       shell: false,
       stdio: ['ignore', 'pipe', 'pipe'],
     });

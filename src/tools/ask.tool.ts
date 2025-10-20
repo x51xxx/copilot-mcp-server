@@ -53,6 +53,12 @@ const askArgsSchema = z.object({
   screenReader: z.boolean().optional().describe('Enable screen reader optimizations'),
   banner: z.boolean().optional().describe('Show the animated banner on startup'),
   timeout: z.number().optional().describe('Maximum execution time in milliseconds'),
+  workingDir: z
+    .string()
+    .optional()
+    .describe(
+      'Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()'
+    ),
 });
 
 export const askTool: UnifiedTool = {
@@ -81,6 +87,7 @@ export const askTool: UnifiedTool = {
       screenReader,
       banner,
       timeout,
+      workingDir,
     } = args;
 
     if (!prompt?.trim()) {
@@ -103,6 +110,7 @@ export const askTool: UnifiedTool = {
         screenReader: screenReader as boolean,
         banner: banner as boolean,
         timeoutMs: timeout as number,
+        workingDir: workingDir as string,
       };
 
       const result = await executeCopilot(prompt as string, options, onProgress);

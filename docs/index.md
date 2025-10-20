@@ -162,11 +162,13 @@ Choose from available AI models:
 - `gpt-5` - OpenAI GPT-5
 
 **Set default model**:
+
 ```bash
 export COPILOT_MODEL=claude-sonnet-4.5
 ```
 
 **Override per request**:
+
 ```
 Use the ask tool with model gpt-5 to analyze @src/
 ```
