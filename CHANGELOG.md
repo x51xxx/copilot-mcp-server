@@ -1,5 +1,50 @@
 # Changelog
 
+## [1.3.0] - 2025-10-21
+
+### Added
+
+- **Claude Haiku 4.5 Model Support** (Copilot CLI v0.0.343+)
+  - New cost-effective model with 0.33x multiplier (3x cheaper than standard models)
+  - Fastest response times for quick tasks and budget-conscious usage
+  - Available via `model: "claude-haiku-4.5"` parameter
+- **`allowAllPaths` parameter** (Copilot CLI v0.0.340+)
+  - Automatically approve access to all file paths
+  - Useful for automated workflows and CI/CD
+  - Added to ask, batch, and review tools
+- **`additionalMcpConfig` parameter** (Copilot CLI v0.0.343+)
+  - Temporary MCP server configuration per-session
+  - Supports inline JSON or file reference with `@` prefix
+  - Enables testing MCP servers without modifying global config
+- **Comprehensive changelog integration guide** (`docs/copilot-cli/changelog-integration.md`)
+  - Version compatibility matrix
+  - Upgrade guide for Copilot CLI v0.0.340+
+  - Feature status tracking
+
+### Changed
+
+- Updated all tool model descriptions to include Claude Haiku 4.5 with cost multiplier info
+- Updated `CopilotExecOptions` interface with new parameters
+- Enhanced documentation in CLAUDE.md with Copilot CLI v0.0.346+ features
+
+### Documentation
+
+- ⚠️ **Breaking Change Notice**: Copilot CLI v0.0.340+ requires `${VAR}` syntax for environment variables in MCP configs
+  - Before: `"API_KEY": "MY_API_KEY"` (literal string)
+  - After: `"API_KEY": "${MY_API_KEY}"` (resolved from environment)
+- Updated Getting Started guide with breaking change warning
+- Updated API documentation with new parameters and examples
+- Added budget-optimization examples using Claude Haiku 4.5
+- Added examples for `allowAllPaths` and `additionalMcpConfig` usage
+
+### Technical Details
+
+- Updated `copilotExecutor.ts` to handle new CLI flags
+- Updated tool schemas in ask.tool.ts, batch.tool.ts, review.tool.ts, brainstorm.tool.ts
+- All changes are backwards compatible with existing configurations
+- Passed TypeScript type checking (npm run lint)
+- Code formatted with Prettier (npm run format)
+
 ## [1.2.0] - 2025-10-20
 
 ### Fixed

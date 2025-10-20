@@ -1,10 +1,8 @@
-import { executeCommand, executeCommandDetailed, RetryOptions } from './commandExecutor.js';
+import { executeCommandDetailed, RetryOptions } from './commandExecutor.js';
 import { Logger } from './logger.js';
 import { CLI } from '../constants.js';
-import { writeFileSync, unlinkSync, existsSync, statSync } from 'fs';
-import { tmpdir } from 'os';
+import { unlinkSync, existsSync, statSync } from 'fs';
 import { join, isAbsolute, dirname } from 'path';
-import { randomBytes } from 'crypto';
 
 // Type-safe enums for Copilot CLI
 export enum LogLevel {
@@ -18,12 +16,14 @@ export enum LogLevel {
 }
 
 export interface CopilotExecOptions {
-  readonly model?: string; // AI model to use (e.g., "claude-sonnet-4.5", "gpt-4o") - v0.0.329+
+  readonly model?: string; // AI model to use (e.g., "claude-sonnet-4.5", "claude-haiku-4.5", "gpt-5") - v0.0.329+
   readonly addDir?: string | string[];
   readonly allowAllTools?: boolean;
   readonly allowTool?: string | string[];
   readonly denyTool?: string | string[];
   readonly disableMcpServer?: string | string[];
+  readonly allowAllPaths?: boolean; // Approve access to all paths automatically - v0.0.340+
+  readonly additionalMcpConfig?: string | Record<string, any>; // Additional MCP server config (JSON string or object) - v0.0.343+
   readonly logDir?: string;
   readonly logLevel?: LogLevel;
   readonly noColor?: boolean;
@@ -261,6 +261,18 @@ export async function executeCopilotCLI(
     }
   }
 
+  if (options?.allowAllPaths) {
+    args.push('--allow-all-paths');
+  }
+
+  if (options?.additionalMcpConfig) {
+    const config =
+      typeof options.additionalMcpConfig === 'string'
+        ? options.additionalMcpConfig
+        : JSON.stringify(options.additionalMcpConfig);
+    args.push('--additional-mcp-config', config);
+  }
+
   if (options?.banner) {
     args.push('--banner');
   }
@@ -409,6 +421,18 @@ export async function executeCopilot(
     for (const server of servers) {
       args.push('--disable-mcp-server', server);
     }
+  }
+
+  if (options?.allowAllPaths) {
+    args.push('--allow-all-paths');
+  }
+
+  if (options?.additionalMcpConfig) {
+    const config =
+      typeof options.additionalMcpConfig === 'string'
+        ? options.additionalMcpConfig
+        : JSON.stringify(options.additionalMcpConfig);
+    args.push('--additional-mcp-config', config);
   }
 
   if (options?.logDir) {

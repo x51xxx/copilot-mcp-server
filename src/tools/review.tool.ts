@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
-import { executeCopilot, LogLevel } from '../utils/copilotExecutor.js';
+import { executeCopilot } from '../utils/copilotExecutor.js';
 import { formatCopilotResponseForMCP } from '../utils/outputParser.js';
 import { ERROR_MESSAGES, STATUS_MESSAGES } from '../constants.js';
 
@@ -24,7 +24,7 @@ const reviewArgsSchema = z.object({
     .string()
     .optional()
     .describe(
-      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var"
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', 'claude-sonnet-4.5', or 'claude-haiku-4.5' (0.33x cost). Defaults to COPILOT_MODEL env var"
     ),
   severity: z
     .enum(['low', 'medium', 'high', 'critical'])
@@ -42,6 +42,16 @@ const reviewArgsSchema = z.object({
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe('Directories to grant access'),
+  allowAllPaths: z
+    .boolean()
+    .optional()
+    .describe('Automatically approve access to all file paths (use with caution)'),
+  additionalMcpConfig: z
+    .union([z.string(), z.record(z.any())])
+    .optional()
+    .describe(
+      'Additional MCP server configuration (JSON string or object). Use @ prefix for file path (e.g., "@config.json")'
+    ),
   timeout: z.number().optional().describe('Maximum execution time in milliseconds'),
   allowAllTools: z.boolean().default(true).describe('Allow all tools for comprehensive analysis'),
   resume: z
@@ -78,6 +88,8 @@ export const reviewTool: UnifiedTool = {
       excludePatterns,
       maxIssues,
       addDir,
+      allowAllPaths,
+      additionalMcpConfig,
       timeout,
       allowAllTools,
       resume,
@@ -171,6 +183,8 @@ export const reviewTool: UnifiedTool = {
           model: model as string,
           addDir: addDir as string | string[],
           allowAllTools: allowAllTools as boolean,
+          allowAllPaths: allowAllPaths as boolean,
+          additionalMcpConfig: additionalMcpConfig as string | Record<string, any>,
           resume: resume as string | boolean,
           continue: continueSession as boolean,
           timeoutMs: (timeout as number) || 300000, // 5 minutes default for reviews

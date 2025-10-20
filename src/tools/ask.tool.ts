@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
 import { executeCopilot, CopilotExecOptions, LogLevel } from '../utils/copilotExecutor.js';
 import { formatCopilotResponseForMCP } from '../utils/outputParser.js';
-import { STATUS_MESSAGES, ERROR_MESSAGES } from '../constants.js';
+import { ERROR_MESSAGES } from '../constants.js';
 
 const askArgsSchema = z.object({
   prompt: z
@@ -15,7 +15,7 @@ const askArgsSchema = z.object({
     .string()
     .optional()
     .describe(
-      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var or Copilot's default"
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', 'claude-sonnet-4.5', or 'claude-haiku-4.5' (0.33x cost). Defaults to COPILOT_MODEL env var or Copilot's default"
     ),
   addDir: z
     .union([z.string(), z.array(z.string())])
@@ -39,6 +39,16 @@ const askArgsSchema = z.object({
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe('Disable specific MCP servers'),
+  allowAllPaths: z
+    .boolean()
+    .optional()
+    .describe('Automatically approve access to all file paths (use with caution)'),
+  additionalMcpConfig: z
+    .union([z.string(), z.record(z.any())])
+    .optional()
+    .describe(
+      'Additional MCP server configuration (JSON string or object). Use @ prefix for file path (e.g., "@config.json")'
+    ),
   logDir: z.string().optional().describe('Set log file directory'),
   logLevel: z
     .enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none'])
@@ -79,6 +89,8 @@ export const askTool: UnifiedTool = {
       allowTool,
       denyTool,
       disableMcpServer,
+      allowAllPaths,
+      additionalMcpConfig,
       logDir,
       logLevel,
       noColor,
@@ -102,6 +114,8 @@ export const askTool: UnifiedTool = {
         allowTool: allowTool as string | string[],
         denyTool: denyTool as string | string[],
         disableMcpServer: disableMcpServer as string | string[],
+        allowAllPaths: allowAllPaths as boolean,
+        additionalMcpConfig: additionalMcpConfig as string | Record<string, any>,
         logDir: logDir as string,
         logLevel: logLevel as LogLevel,
         noColor: noColor as boolean,

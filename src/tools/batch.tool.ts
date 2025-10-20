@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
 import { executeCopilot, LogLevel } from '../utils/copilotExecutor.js';
-import { ERROR_MESSAGES, STATUS_MESSAGES } from '../constants.js';
+import { STATUS_MESSAGES } from '../constants.js';
 
 // Define task type for batch operations
 const batchTaskSchema = z.object({
@@ -19,7 +19,7 @@ const batchArgsSchema = z.object({
     .string()
     .optional()
     .describe(
-      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var"
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', 'claude-sonnet-4.5', or 'claude-haiku-4.5' (0.33x cost). Defaults to COPILOT_MODEL env var"
     ),
   addDir: z
     .union([z.string(), z.array(z.string())])
@@ -34,6 +34,16 @@ const batchArgsSchema = z.object({
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe('Deny specific tools'),
+  allowAllPaths: z
+    .boolean()
+    .optional()
+    .describe('Automatically approve access to all file paths (use with caution)'),
+  additionalMcpConfig: z
+    .union([z.string(), z.record(z.any())])
+    .optional()
+    .describe(
+      'Additional MCP server configuration (JSON string or object). Use @ prefix for file path (e.g., "@config.json")'
+    ),
   logLevel: z
     .enum(['error', 'warning', 'info', 'debug', 'all', 'default', 'none'])
     .optional()
@@ -71,6 +81,8 @@ export const batchTool: UnifiedTool = {
       allowAllTools,
       allowTool,
       denyTool,
+      allowAllPaths,
+      additionalMcpConfig,
       logLevel,
       resume,
       continue: continueSession,
@@ -124,6 +136,8 @@ export const batchTool: UnifiedTool = {
             allowAllTools: allowAllTools as boolean,
             allowTool: allowTool as string | string[],
             denyTool: denyTool as string | string[],
+            allowAllPaths: allowAllPaths as boolean,
+            additionalMcpConfig: additionalMcpConfig as string | Record<string, any>,
             logLevel: logLevel as LogLevel,
             resume: resume as string | boolean,
             continue: continueSession as boolean,

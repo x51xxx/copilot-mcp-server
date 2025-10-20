@@ -8,23 +8,25 @@ The `ask` tool provides a bridge to GitHub Copilot CLI, allowing you to leverage
 
 ## Parameters
 
-| Parameter          | Type               | Required | Default | Description                                                                  |
-| ------------------ | ------------------ | -------- | ------- | ---------------------------------------------------------------------------- |
-| `prompt`           | string             | ✅       | -       | Task or question for GitHub Copilot CLI. Supports @ syntax for files/images  |
-| `model`            | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, or `claude-sonnet-4.5`                 |
-| `addDir`           | string \| string[] | ❌       | -       | Add directories to allowed list for file access                              |
-| `allowAllTools`    | boolean            | ❌       | `true`  | Allow all tools to run automatically (required for non-interactive mode)     |
-| `allowTool`        | string \| string[] | ❌       | -       | Allow specific tools to run (supports glob patterns)                         |
-| `denyTool`         | string \| string[] | ❌       | -       | Deny specific tools (takes precedence over allowTool)                        |
-| `disableMcpServer` | string \| string[] | ❌       | -       | Disable specific MCP servers                                                 |
-| `logDir`           | string             | ❌       | -       | Set log file directory                                                       |
-| `logLevel`         | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none` |
-| `noColor`          | boolean            | ❌       | -       | Disable all color output                                                     |
-| `resume`           | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)               |
-| `continue`         | boolean            | ❌       | -       | Resume the most recent session                                               |
-| `screenReader`     | boolean            | ❌       | -       | Enable screen reader optimizations                                           |
-| `banner`           | boolean            | ❌       | -       | Show the animated banner on startup                                          |
-| `timeout`          | number             | ❌       | -       | Maximum execution time in milliseconds                                       |
+| Parameter             | Type               | Required | Default | Description                                                                              |
+| --------------------- | ------------------ | -------- | ------- | ---------------------------------------------------------------------------------------- |
+| `prompt`              | string             | ✅       | -       | Task or question for GitHub Copilot CLI. Supports @ syntax for files/images              |
+| `model`               | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, `claude-sonnet-4.5`, or `claude-haiku-4.5` (0.33x) |
+| `addDir`              | string \| string[] | ❌       | -       | Add directories to allowed list for file access                                          |
+| `allowAllTools`       | boolean            | ❌       | `true`  | Allow all tools to run automatically (required for non-interactive mode)                 |
+| `allowTool`           | string \| string[] | ❌       | -       | Allow specific tools to run (supports glob patterns)                                     |
+| `denyTool`            | string \| string[] | ❌       | -       | Deny specific tools (takes precedence over allowTool)                                    |
+| `disableMcpServer`    | string \| string[] | ❌       | -       | Disable specific MCP servers                                                             |
+| `allowAllPaths`       | boolean            | ❌       | -       | Approve access to all paths automatically (use with caution, v0.0.340+)                  |
+| `additionalMcpConfig` | string \| object   | ❌       | -       | Additional MCP server config (JSON or @file path, v0.0.343+)                             |
+| `logDir`              | string             | ❌       | -       | Set log file directory                                                                   |
+| `logLevel`            | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none`             |
+| `noColor`             | boolean            | ❌       | -       | Disable all color output                                                                 |
+| `resume`              | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)                           |
+| `continue`            | boolean            | ❌       | -       | Resume the most recent session                                                           |
+| `screenReader`        | boolean            | ❌       | -       | Enable screen reader optimizations                                                       |
+| `banner`              | boolean            | ❌       | -       | Show the animated banner on startup                                                      |
+| `timeout`             | number             | ❌       | -       | Maximum execution time in milliseconds                                                   |
 
 ## Examples
 
@@ -94,6 +96,43 @@ The `ask` tool provides a bridge to GitHub Copilot CLI, allowing you to leverage
   "allowAllTools": true,
   "denyTool": ["shell(rm)", "shell(sudo)", "shell(git push)"],
   "addDir": ["."]
+}
+```
+
+### Budget-optimized analysis with Haiku
+
+```typescript
+{
+  "prompt": "Quickly review @src/utils/helpers.ts for basic issues",
+  "model": "claude-haiku-4.5",  // 3x cheaper than other models
+  "allowAllTools": true
+}
+```
+
+### Advanced: Temporary MCP server configuration
+
+```typescript
+{
+  "prompt": "Use my custom analysis tool",
+  "additionalMcpConfig": {
+    "mcpServers": {
+      "custom-analyzer": {
+        "command": "node",
+        "args": ["analyzer.js"]
+      }
+    }
+  }
+}
+```
+
+### Automated workflows with path approval
+
+```typescript
+{
+  "prompt": "Refactor all TypeScript files",
+  "allowAllPaths": true,  // Skip path approval prompts
+  "allowAllTools": true,
+  "addDir": ["./src"]
 }
 ```
 

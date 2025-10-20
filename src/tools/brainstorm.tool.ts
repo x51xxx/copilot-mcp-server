@@ -108,7 +108,7 @@ const brainstormArgsSchema = z.object({
     .string()
     .optional()
     .describe(
-      "AI model to use: 'gpt-5', 'claude-sonnet-4', or 'claude-sonnet-4.5'. Defaults to COPILOT_MODEL env var"
+      "AI model to use: 'gpt-5', 'claude-sonnet-4', 'claude-sonnet-4.5', or 'claude-haiku-4.5' (0.33x cost). Defaults to COPILOT_MODEL env var"
     ),
   addDir: z
     .union([z.string(), z.array(z.string())])
