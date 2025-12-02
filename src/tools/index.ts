@@ -6,6 +6,8 @@ import { reviewTool } from './review.tool.js';
 import { pingTool, helpTool, versionTool } from './simple-tools.js';
 import { brainstormTool } from './brainstorm.tool.js';
 import { timeoutTestTool } from './timeout-test.tool.js';
+import { healthTool } from './health.tool.js';
+import { listSessionsTool } from './list-sessions.tool.js';
 
 toolRegistry.push(
   // Copilot tools
@@ -18,7 +20,11 @@ toolRegistry.push(
   helpTool,
   versionTool,
   brainstormTool,
-  timeoutTestTool
+  timeoutTestTool,
+
+  // Session & Diagnostics tools
+  healthTool,
+  listSessionsTool
 );
 
 export * from './registry.js';

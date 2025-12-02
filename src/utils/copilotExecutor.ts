@@ -3,6 +3,21 @@ import { Logger } from './logger.js';
 import { CLI } from '../constants.js';
 import { unlinkSync, existsSync, statSync } from 'fs';
 import { join, isAbsolute, dirname } from 'path';
+import {
+  CLIError,
+  ErrorCategory,
+  createCLIError,
+  isRetryableError,
+  getRetryDelay,
+  logCLIError,
+} from './errorTypes.js';
+import {
+  getOrCreateSession,
+  saveSession,
+  addToSessionHistory,
+  setCopilotConversationId,
+  parseConversationIdFromOutput,
+} from './sessionStorage.js';
 
 // Type-safe enums for Copilot CLI
 export enum LogLevel {
@@ -16,19 +31,19 @@ export enum LogLevel {
 }
 
 export interface CopilotExecOptions {
-  readonly model?: string; // AI model to use (e.g., "claude-sonnet-4.5", "claude-haiku-4.5", "gpt-5") - v0.0.329+
+  readonly model?: string; // AI model to use (e.g., "claude-sonnet-4.5", "claude-haiku-4.5", "gpt-5")
   readonly addDir?: string | string[];
   readonly allowAllTools?: boolean;
   readonly allowTool?: string | string[];
   readonly denyTool?: string | string[];
   readonly disableMcpServer?: string | string[];
-  readonly allowAllPaths?: boolean; // Approve access to all paths automatically - v0.0.340+
-  readonly additionalMcpConfig?: string | Record<string, any>; // Additional MCP server config (JSON string or object) - v0.0.343+
+  readonly allowAllPaths?: boolean; // Approve access to all paths automatically
+  readonly additionalMcpConfig?: string | Record<string, any>; // Additional MCP server config (JSON string or object)
   readonly logDir?: string;
   readonly logLevel?: LogLevel;
   readonly noColor?: boolean;
   readonly resume?: string | boolean; // session ID or true for latest
-  readonly continue?: boolean; // Resume most recent session - v0.0.336+
+  readonly continue?: boolean; // Resume most recent session
   readonly screenReader?: boolean;
   readonly banner?: boolean;
   readonly workingDir?: string;
@@ -36,6 +51,9 @@ export interface CopilotExecOptions {
   readonly maxOutputBytes?: number;
   readonly retry?: RetryOptions;
   readonly useStdinForLongPrompts?: boolean; // Use stdin for prompts > 100KB
+  // Session management
+  readonly sessionId?: string; // Use specific session for multi-turn conversations
+  readonly enableSessionTracking?: boolean; // Enable session tracking (default: true)
 }
 
 /**
@@ -294,11 +312,7 @@ export async function executeCopilotCLI(
   }
 
   if (options?.resume) {
-    if (typeof options.resume === 'string') {
-      args.push('--resume', options.resume);
-    } else {
-      args.push('--resume');
-    }
+    args.push('--resume');
   }
 
   if (options?.continue) {
@@ -362,6 +376,15 @@ export async function executeCopilotCLI(
 }
 
 /**
+ * Execution result with session info
+ */
+export interface CopilotExecResult {
+  output: string;
+  sessionId?: string;
+  conversationId?: string;
+}
+
+/**
  * High-level executeCopilot function with comprehensive options support
  */
 export async function executeCopilot(
@@ -373,6 +396,13 @@ export async function executeCopilot(
 
   // Resolve working directory with fallback chain
   const cwd = resolveWorkingDirectory(options?.workingDir, prompt);
+
+  // Session management
+  const enableSessionTracking = options?.enableSessionTracking !== false;
+  let session =
+    enableSessionTracking && cwd
+      ? getOrCreateSession(cwd, options?.sessionId, options?.model)
+      : undefined;
 
   // Model selection (prioritize: explicit param > env var > default)
   const model = options?.model || process.env.COPILOT_MODEL;
@@ -455,12 +485,9 @@ export async function executeCopilot(
     args.push('--screen-reader');
   }
 
+  // Resume support - always use --resume without ID (Copilot CLI manages sessions internally)
   if (options?.resume) {
-    if (typeof options.resume === 'string') {
-      args.push('--resume', options.resume);
-    } else {
-      args.push('--resume');
-    }
+    args.push('--resume');
   }
 
   if (options?.continue) {
@@ -473,6 +500,11 @@ export async function executeCopilot(
   try {
     const timeoutMs = options?.timeoutMs || 600000; // 10 minutes default
 
+    // Track user prompt in session
+    if (session) {
+      addToSessionHistory(session.id, 'user', prompt);
+    }
+
     const result = await executeCommandDetailed(CLI.COMMANDS.COPILOT, args, {
       onProgress,
       timeoutMs,
@@ -482,45 +514,66 @@ export async function executeCopilot(
     });
 
     if (!result.ok) {
-      // Enhanced error handling with specific messages
+      // Create structured error
       const errorMessage = result.stderr || 'Unknown error';
+      const context = {
+        command: CLI.COMMANDS.COPILOT,
+        exitCode: result.code,
+        timedOut: result.timedOut,
+        workingDir: cwd,
+      };
 
-      if (errorMessage.includes('command not found') || errorMessage.includes('not found')) {
-        throw new Error('Copilot CLI not found. Install with: npm install -g @github/copilot-cli');
+      const cliError = createCLIError(new Error(errorMessage), context);
+      logCLIError(cliError);
+
+      throw cliError;
+    }
+
+    // Track assistant response in session
+    if (session) {
+      addToSessionHistory(session.id, 'assistant', result.stdout);
+
+      // Try to extract conversation ID for resume capability
+      const conversationId = parseConversationIdFromOutput(result.stdout);
+      if (conversationId) {
+        setCopilotConversationId(session.id, conversationId);
       }
 
-      if (
-        errorMessage.includes('authentication') ||
-        errorMessage.includes('unauthorized') ||
-        errorMessage.includes('login')
-      ) {
-        throw new Error('Authentication failed. Run "copilot --help" to see login options');
-      }
-
-      if (errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
-        throw new Error('Rate limit exceeded. Please wait and try again');
-      }
-
-      if (
-        errorMessage.includes('permission') ||
-        errorMessage.includes('tool') ||
-        errorMessage.includes('denied')
-      ) {
-        throw new Error(
-          `Tool permission denied. Try adjusting --allow-tool or --allow-all-tools: ${errorMessage}`
-        );
-      }
-
-      if (errorMessage.includes('directory') || errorMessage.includes('access')) {
-        throw new Error(`Directory access denied. Use --add-dir to grant access: ${errorMessage}`);
-      }
-
-      throw new Error(`Copilot CLI failed: ${errorMessage}`);
+      saveSession(session);
     }
 
     return result.stdout;
   } catch (error) {
-    Logger.error('Copilot execution failed:', error);
-    throw error;
+    // Convert to CLIError if not already
+    const cliError = error instanceof CLIError ? error : createCLIError(error);
+    logCLIError(cliError);
+    throw cliError;
   }
 }
+
+/**
+ * Execute Copilot with full result including session info
+ */
+export async function executeCopilotWithSession(
+  prompt: string,
+  options?: CopilotExecOptions & { [key: string]: any },
+  onProgress?: (newOutput: string) => void
+): Promise<CopilotExecResult> {
+  const cwd = resolveWorkingDirectory(options?.workingDir, prompt);
+  const enableSessionTracking = options?.enableSessionTracking !== false;
+  const session =
+    enableSessionTracking && cwd
+      ? getOrCreateSession(cwd, options?.sessionId, options?.model)
+      : undefined;
+
+  const output = await executeCopilot(prompt, { ...options, sessionId: session?.id }, onProgress);
+
+  return {
+    output,
+    sessionId: session?.id,
+    conversationId: session?.copilotConversationId,
+  };
+}
+
+// Re-export error types for convenience
+export { CLIError, ErrorCategory, createCLIError, isRetryableError, getRetryDelay };

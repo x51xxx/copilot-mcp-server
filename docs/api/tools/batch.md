@@ -8,23 +8,23 @@ The `batch` tool enables efficient batch processing of multiple tasks using GitH
 
 ## Parameters
 
-| Parameter              | Type               | Required | Default | Description                                                                                  |
-| ---------------------- | ------------------ | -------- | ------- | -------------------------------------------------------------------------------------------- |
-| `tasks`                | Task[]             | ✅       | -       | Array of atomic tasks to delegate to GitHub Copilot                                          |
-| `model`                | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, `claude-sonnet-4.5`, or `claude-haiku-4.5` (0.33x)     |
-| `addDir`               | string \| string[] | ❌       | -       | Add directories to allowed list for file access                                              |
-| `allowAllTools`        | boolean            | ❌       | `true`  | Allow all tools to run automatically                                                         |
-| `allowTool`            | string \| string[] | ❌       | -       | Allow specific tools (supports glob patterns)                                                |
-| `denyTool`             | string \| string[] | ❌       | -       | Deny specific tools                                                                          |
-| `logLevel`             | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none`                 |
-| `resume`               | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)                               |
-| `continue`             | boolean            | ❌       | -       | Resume the most recent session                                                               |
-| `parallel`             | boolean            | ❌       | `false` | Execute tasks in parallel (experimental)                                                     |
-| `stopOnError`          | boolean            | ❌       | `true`  | Stop execution if any task fails                                                             |
-| `timeout`              | number             | ❌       | -       | Maximum execution time per task in milliseconds                                              |
-| `allowAllPaths`        | boolean            | ❌       | -       | Approve access to all paths automatically (use with caution, v0.0.340+)                      |
-| `additionalMcpConfig`  | string \| object   | ❌       | -       | Additional MCP server config (JSON or @file path, v0.0.343+)                                 |
-| `workingDir`           | string             | ❌       | -       | Working directory for running tools and resolving `@` paths                                  |
+| Parameter             | Type               | Required | Default | Description                                                                              |
+| --------------------- | ------------------ | -------- | ------- | ---------------------------------------------------------------------------------------- |
+| `tasks`               | Task[]             | ✅       | -       | Array of atomic tasks to delegate to GitHub Copilot                                      |
+| `model`               | string             | ❌       | -       | AI model: `gpt-5`, `claude-sonnet-4`, `claude-sonnet-4.5`, or `claude-haiku-4.5` (0.33x) |
+| `addDir`              | string \| string[] | ❌       | -       | Add directories to allowed list for file access                                          |
+| `allowAllTools`       | boolean            | ❌       | `true`  | Allow all tools to run automatically                                                     |
+| `allowTool`           | string \| string[] | ❌       | -       | Allow specific tools (supports glob patterns)                                            |
+| `denyTool`            | string \| string[] | ❌       | -       | Deny specific tools                                                                      |
+| `logLevel`            | enum               | ❌       | -       | Set log level: `error`, `warning`, `info`, `debug`, `all`, `default`, `none`             |
+| `resume`              | string \| boolean  | ❌       | -       | Resume from a previous session (optionally specify session ID)                           |
+| `continue`            | boolean            | ❌       | -       | Resume the most recent session                                                           |
+| `parallel`            | boolean            | ❌       | `false` | Execute tasks in parallel (experimental)                                                 |
+| `stopOnError`         | boolean            | ❌       | `true`  | Stop execution if any task fails                                                         |
+| `timeout`             | number             | ❌       | -       | Maximum execution time per task in milliseconds                                          |
+| `allowAllPaths`       | boolean            | ❌       | -       | Approve access to all paths automatically (use with caution, v0.0.340+)                  |
+| `additionalMcpConfig` | string \| object   | ❌       | -       | Additional MCP server config (JSON or @file path, v0.0.343+)                             |
+| `workingDir`          | string             | ❌       | -       | Working directory for running tools and resolving `@` paths                              |
 
 ### Task Object
 

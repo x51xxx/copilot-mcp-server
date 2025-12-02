@@ -69,25 +69,46 @@ export const CLI = {
     PROMPT: '-p',
     HELP: '--help',
     VERSION: '--version',
-    MODEL: '--model', // Model selection (v0.0.329+)
+    MODEL: '--model', // Model selection
     ADD_DIR: '--add-dir',
     ALLOW_ALL_TOOLS: '--allow-all-tools',
     ALLOW_TOOL: '--allow-tool',
     DENY_TOOL: '--deny-tool',
     DISABLE_MCP_SERVER: '--disable-mcp-server',
+    DISABLE_BUILTIN_MCPS: '--disable-builtin-mcps',
+    ALLOW_ALL_PATHS: '--allow-all-paths',
+    ADDITIONAL_MCP_CONFIG: '--additional-mcp-config',
     LOG_DIR: '--log-dir',
     LOG_LEVEL: '--log-level',
     NO_COLOR: '--no-color',
     RESUME: '--resume',
-    CONTINUE: '--continue', // Resume most recent session (v0.0.336+)
+    CONTINUE: '--continue', // Resume most recent session
     SCREEN_READER: '--screen-reader',
     BANNER: '--banner',
+    SILENT: '--silent',
+    STREAM: '--stream',
+    AGENT: '--agent',
+    NO_CUSTOM_INSTRUCTIONS: '--no-custom-instructions',
+    DISALLOW_TEMP_DIR: '--disallow-temp-dir',
+    DISABLE_PARALLEL_TOOLS: '--disable-parallel-tools-execution',
+    ENABLE_ALL_GITHUB_MCP: '--enable-all-github-mcp-tools',
   },
-  // Available models in GitHub Copilot CLI
+  // Available models in GitHub Copilot CLI (from copilot --help)
   MODELS: {
-    CLAUDE_SONNET_4_5: 'claude-sonnet-4.5', // Default in Copilot CLI
-    CLAUDE_SONNET_4: 'claude-sonnet-4',
-    GPT_5: 'gpt-5',
+    // Claude models
+    CLAUDE_SONNET_4_5: 'claude-sonnet-4.5', // Default in Copilot CLI (1x)
+    CLAUDE_HAIKU_4_5: 'claude-haiku-4.5', // Faster/cheaper
+    CLAUDE_OPUS_4_5: 'claude-opus-4.5', // Most capable
+    CLAUDE_SONNET_4: 'claude-sonnet-4', // (1x)
+    // GPT models
+    GPT_5: 'gpt-5', // (1x)
+    GPT_5_1: 'gpt-5.1',
+    GPT_5_1_CODEX_MINI: 'gpt-5.1-codex-mini',
+    GPT_5_1_CODEX: 'gpt-5.1-codex',
+    GPT_5_MINI: 'gpt-5-mini', // (0x)
+    GPT_4_1: 'gpt-4.1', // (0x)
+    // Gemini models
+    GEMINI_3_PRO: 'gemini-3-pro-preview',
   } as const,
   // Default values
   DEFAULTS: {
@@ -95,6 +116,13 @@ export const CLI = {
     BOOLEAN_TRUE: 'true',
     BOOLEAN_FALSE: 'false',
   },
+} as const;
+
+// Session storage constants
+export const SESSION = {
+  MAX_SESSIONS: 50, // Maximum concurrent sessions
+  TTL_HOURS: 24, // Session time-to-live in hours
+  WORKSPACE_ID_LENGTH: 12, // Length of workspace ID hash
 } as const;
 
 // Tool Arguments interface

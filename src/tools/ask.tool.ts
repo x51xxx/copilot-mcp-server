@@ -69,6 +69,13 @@ const askArgsSchema = z.object({
     .describe(
       'Working directory for command execution. Falls back to COPILOT_MCP_CWD env var or process.cwd()'
     ),
+  // Session management
+  sessionId: z.string().optional().describe('Use specific session ID for multi-turn conversations'),
+  enableSessionTracking: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe('Enable session tracking for conversation persistence'),
 });
 
 export const askTool: UnifiedTool = {
@@ -100,6 +107,8 @@ export const askTool: UnifiedTool = {
       banner,
       timeout,
       workingDir,
+      sessionId,
+      enableSessionTracking,
     } = args;
 
     if (!prompt?.trim()) {
@@ -125,6 +134,8 @@ export const askTool: UnifiedTool = {
         banner: banner as boolean,
         timeoutMs: timeout as number,
         workingDir: workingDir as string,
+        sessionId: sessionId as string,
+        enableSessionTracking: enableSessionTracking as boolean,
       };
 
       const result = await executeCopilot(prompt as string, options, onProgress);

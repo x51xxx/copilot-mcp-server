@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.4.0] - 2025-12-01
+
+### Added
+
+- **Session Management System**
+  - New `sessionStorage.ts` utility for multi-turn conversation persistence
+  - Workspace-isolated sessions with MD5 hash IDs
+  - 24-hour TTL, maximum 50 concurrent sessions
+  - Conversation ID tracking for `--resume` support
+- **Health Diagnostics Tool** (`health`)
+  - Check CLI installation, version, and authentication status
+  - Feature availability detection
+  - Session statistics and specific session inspection
+  - Markdown report with status tables and recommendations
+- **Session Management Tool** (`list-sessions`)
+  - Actions: list, delete, clear
+  - Display session ID, workspace, last activity, resume capability
+- **Structured Error Handling** (`errorTypes.ts`)
+  - `CLIError` class with 8 categories (CLI_NOT_FOUND, AUTHENTICATION, RATE_LIMIT, TIMEOUT, SANDBOX, NETWORK, SESSION, UNKNOWN)
+  - `classifyError()` - automatic error classification from message patterns
+  - `isRetryableError()` and `getRetryDelay()` - exponential backoff with jitter
+  - User-friendly error messages with suggestions
+- **New Model Support** (from `copilot --help`)
+  - Claude: claude-opus-4.5
+  - GPT: gpt-5.1, gpt-5.1-codex, gpt-5.1-codex-mini, gpt-5-mini, gpt-4.1
+  - Gemini: gemini-3-pro-preview
+- **Session Parameters for ask tool**
+  - `sessionId` - Use specific session for multi-turn conversations
+  - `enableSessionTracking` - Enable/disable session tracking (default: true)
+
+### Changed
+
+- `executeCopilot()` now integrates session tracking and structured error handling
+- Updated `constants.ts` with all available models and SESSION constants
+- Enhanced CLAUDE.md documentation with new features
+
+### Technical Details
+
+- New files: `src/utils/errorTypes.ts`, `src/utils/sessionStorage.ts`, `src/tools/health.tool.ts`, `src/tools/list-sessions.tool.ts`
+- All changes backwards compatible
+- Passed TypeScript type checking (npm run lint)
+- Code formatted with Prettier (npm run format)
+
 ## [1.3.0] - 2025-10-21
 
 ### Added
